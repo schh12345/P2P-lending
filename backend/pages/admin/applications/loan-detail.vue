@@ -15,8 +15,8 @@
       <!-- Pending table -->
       <div v-else-if="loanStatus === 'Pending' && loanRequest && Object.keys(loanRequest).length">
         <h3 class="text-lg font-semibold mb-4">Pending Loan Request Details</h3>
-        <p><strong>Borrower:</strong> {{ loanRequest.borrower_firstname }} {{ loanRequest.borrower_lastname }}</p>
-        <p><strong>Borrower Email:</strong> {{ loanRequest.borrower_email }}</p>
+        <p><strong>Borrower:</strong> {{ loanRequest.borrower.first_name }} {{ loanRequest.borrower.last_name }}</p>
+        <p><strong>Borrower Email:</strong> {{ loanRequest.borrower.email }}</p>
         <p><strong>Amount:</strong> ${{ loanRequest.request_amount }}</p>
         <p><strong>Duration:</strong> {{ loanRequest.request_duration }} months</p>
         <p><strong>Reason:</strong> {{ loanRequest.request_reason }}</p>

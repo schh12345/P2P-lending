@@ -106,10 +106,8 @@ class LenderApi extends Controller
             'password' => Hash::make($validated['password']),
             'phone_number' => $validated['phone_number'],
             'otp' => $randomNumber,
-            // 'amount' => 0,
-            // 'balance' => 0,
-            // 'credit_score' => 100,
-            'status' => 'Pending'
+            'amount' => 0,
+            'status' => 'Inactive'
 
         ]);
 

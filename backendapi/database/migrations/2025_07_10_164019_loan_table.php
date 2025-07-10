@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
 
             $table->unsignedBigInteger('request_id')->nullable();
-            $table->foreign('request_id')->references('request_id')->on('loanRequest')->onDelete('cascade');
+            $table->foreign('request_id')->references('request_id')->on('loan_requests')->onDelete('cascade');
             $table->integer('request_duration')->nullable();
             $table->text('request_reason');
             $table->double('request_amount');
@@ -31,13 +31,13 @@ return new class extends Migration {
         });
     }
 
-        /**
-         * Reverse the migrations.
-         */
-        public
-        function down(): void
-        {
-            Schema::dropIfExists('loan_after_approves');
-            Schema::dropIfExists('loans');
-        }
-    };
+    /**
+     * Reverse the migrations.
+     */
+    public
+    function down(): void
+    {
+        Schema::dropIfExists('loan_after_approves');
+        Schema::dropIfExists('loans');
+    }
+};

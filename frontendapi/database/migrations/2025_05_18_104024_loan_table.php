@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
 
             $table->unsignedBigInteger('request_id')->nullable();
-            $table->foreign('request_id')->references('request_id')->on('loanRequest')->onDelete('cascade');
+            $table->foreign('request_id')->references('request_id')->on('loan_requests')->onDelete('cascade');
             $table->integer('request_duration')->nullable();
             $table->text('request_reason');
             $table->double('request_amount');
@@ -52,7 +52,7 @@ return new class extends Migration
             $table->timestamps(); // includes created_at and updated_at
             $table->unsignedBigInteger('request_id')->nullable();
 
-            $table->foreign('request_id')->references('request_id')->on('loanRequest')->onDelete('cascade');
+            $table->foreign('request_id')->references('request_id')->on('loan_requests')->onDelete('cascade');
 
             $table->unsignedBigInteger('BorrowerID');
             $table->unsignedBigInteger('LenderID');

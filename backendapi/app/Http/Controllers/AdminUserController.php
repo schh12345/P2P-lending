@@ -37,8 +37,7 @@ class AdminUserController extends Controller
 
             // Build lenders query
             $lendersQuery = Lender::select([
-                'id', 'first_name', 'last_name', 'email', 'phone_number',
-                'amount', 'credit_score', 'status', 'approval_status', 'created_at',
+                'id', 'first_name', 'last_name', 'email', 'phone_number', 'status', 'approval_status', 'created_at',
                 DB::raw('"lender" as table_type')
             ]);
 
@@ -566,7 +565,7 @@ class AdminUserController extends Controller
             $totalActiveUsers = $borrowersCount + $lendersCount;
 
 
-            $loanRequestsCount = DB::table('loanRequest')->count();
+            $loanRequestsCount = DB::table('loan_requests')->count();
 
             $approvedLoansCount = DB::table('loans')->where('status', 'Active')->count();
             return response()->json([

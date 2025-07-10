@@ -19,8 +19,7 @@ return new class extends Migration
             $table->string('otp')->unique()->nullable();
             $table->string('password');
             $table->string('phone_number');
-            $table->double('amount');
-            $table->integer('credit_score');
+            $table->double('amount')->nullable();
             $table->enum('status', ['Suspended', 'Active', 'Inactive'])->default('Inactive');
             $table->enum('approval_status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->string('country')->nullable();
@@ -39,7 +38,7 @@ return new class extends Migration
         });
 
     }
-    
+
 
     /**
      * Reverse the migrations.

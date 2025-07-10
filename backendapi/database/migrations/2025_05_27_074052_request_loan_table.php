@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loanRequest', function (Blueprint $table) {
+        Schema::create('loan_requests', function (Blueprint $table) {
             $table->id('request_id');
 
             // Foreign Keys

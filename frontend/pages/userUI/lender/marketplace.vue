@@ -119,7 +119,7 @@
 
                 <!-- Loan Display -->
                     <div class="p-5">
-                        <div v-if="loading">Loanding the data</div>
+                        <div v-if="loading">Loading the data</div>
                         <div v-else class="space-y-6">
                             <div v-if="loans.length === 0">No loan records found.</div>
                             <div v-else>
@@ -297,7 +297,7 @@
 
     const loans=ref()
     const loading=ref(true)
-    const fullUrl = (path) => `http://localhost:8000${path}`
+    const fullUrl = (path) => `http://localhost:8001${path}`
     onMounted( async()=> {
 
         try{

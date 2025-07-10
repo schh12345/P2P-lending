@@ -14,7 +14,7 @@ class LoanController extends Controller
 {
     // show all loan controller
     public function showAllLoan() {
-        $loan = Loan::with('borrower')->where('status', 'pending')->get();
+        $loan = Loan::with('borrower')->where('status', 'Active')->get();
 
         return response()->json([
             'loan'=>$loan,
@@ -24,7 +24,7 @@ class LoanController extends Controller
     // show specific loan with id
     public function showLoan($loanid) {
         $loan=Loan::with('borrower')->find($loanid);
-        
+
         if (!$loan) {
             return response()-> json(['message'=> 'Loan not found'], 404);
         }

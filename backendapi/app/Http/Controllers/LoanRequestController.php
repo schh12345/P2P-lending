@@ -9,92 +9,109 @@ use App\Models\LoanRequest;
 class LoanRequestController extends Controller
 {
     public function getAllLoanRequests(Request $request)
-    {
-        try {
-            $status = $request->query('status');
-            $amount = $request->query('amount');
-            $borrowerID = $request->query('borrower_id');
-            $reason = $request->query('reason');
-            $borrower_firstname = $request->query('borrower_firstname');
-            $borrower_lastname = $request->query('borrower_lastname');
+{
+    try {
+        $status = $request->query('status');
+        $amount = $request->query('amount');
+        $borrowerID = $request->query('borrower_id');
+        $reason = $request->query('reason');
+        $borrower_firstname = $request->query('borrower_firstname');
+        $borrower_lastname = $request->query('borrower_lastname');
 
-            $query = DB::table('loanRequest')
-                ->leftJoin('borrowers', 'loanRequest.borrower_id', '=', 'borrowers.id')
-                ->select(
-                    'loanRequest.request_id',
-                    'loanRequest.borrower_id',
-                    'loanRequest.request_duration',
-                    'loanRequest.request_amount',
-                    'loanRequest.request_reason',
-                    'loanRequest.status',
-                    'loanRequest.created_at',
-                    'loanRequest.updated_at',
-                    'borrowers.first_name as borrower_firstname',
-                    'borrowers.last_name as borrower_lastname',
-                    'borrowers.email as borrower_email',
-                    'borrowers.phone_number as borrower_phone',
-                    'borrowers.credit_score as borrower_credit_score'
-                );
+        // Build query - Fix the column names to match your database
+        $query = DB::table('loan_requests')
+            ->leftJoin('borrowers', 'loan_requests.BorrowerID', '=', 'borrowers.id') // Changed borrower_id to BorrowerID
+            ->select(
+                'loan_requests.request_id',
+                'loan_requests.BorrowerID as borrower_id', // Alias for consistency
+                'loan_requests.request_duration',
+                'loan_requests.request_amount',
+                'loan_requests.request_reason',
+                'loan_requests.status',
+                'loan_requests.created_at',
+                'loan_requests.updated_at',
+                'borrowers.first_name as borrower_firstname',
+                'borrowers.last_name as borrower_lastname',
+                'borrowers.email as borrower_email',
+                'borrowers.phone_number as borrower_phone',
+                'borrowers.credit_score as borrower_credit_score'
+            );
 
-            if ($status) {
-                $query->where('loanRequest.status', $status);
-            }
-
-            if ($borrowerID) {
-                $query->where('loanRequest.borrower_id', $borrowerID);
-            }
-
-            if ($reason) {
-                $query->where('loanRequest.request_reason', 'LIKE', '%' . $reason . '%');
-            }
-
-            if ($amount) {
-                $query->where('loanRequest.request_amount', '=', $amount);
-            }
-
-            $totalPending = DB::table('loanRequest')->where('status', 'Pending')->count();
-            $totalApproved = DB::table('loanRequest')->where('status', 'Approved')->count();
-            $totalRejected = DB::table('loanRequest')->where('status', 'Rejected')->count();
-            $totalRequests = DB::table('loanRequest')->count();
-            $totalAmount = DB::table('loanRequest')->sum('request_amount');
-            $loanRequests = $query->orderBy('loanRequest.created_at', 'desc')
-                ->paginate(10);
-            $totalApprovedAmount = DB::table('loanRequest')
-                ->where('status', 'Approved')
-                ->sum('request_amount');
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Loan requests retrieved successfully',
-                'data' => $loanRequests,
-                'stats' => [
-                    'total' => $totalRequests,
-                    'pending' => $totalPending,
-                    'approved' => $totalApproved,
-                    'rejected' => $totalRejected,
-                    'total_amount' => $totalApprovedAmount,
-                ],
-                'filters' => [
-                    'borrower_id' => $borrowerID,
-                    'borrower_first_name' => $borrower_firstname,
-                    'borrower_last_name' => $borrower_lastname,
-                    'reason' => $reason,
-                ]
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve loan requests',
-                'error' => $e->getMessage(),
-            ], 500);
+        // Apply filters - Update column references
+        if ($status) {
+            $query->where('loan_requests.status', $status);
         }
+
+        if ($borrowerID) {
+            $query->where('loan_requests.BorrowerID', $borrowerID); // Changed column name
+        }
+
+        if ($reason) {
+            $query->where('loan_requests.request_reason', 'LIKE', '%' . $reason . '%');
+        }
+
+        if ($amount) {
+            $query->where('loan_requests.request_amount', '=', $amount);
+        }
+
+        if ($borrower_firstname) {
+            $query->where('borrowers.first_name', 'LIKE', '%' . $borrower_firstname . '%');
+        }
+
+        if ($borrower_lastname) {
+            $query->where('borrowers.last_name', 'LIKE', '%' . $borrower_lastname . '%');
+        }
+
+        // Fetch stats
+        $totalPending = DB::table('loan_requests')->where('status', 'Pending')->count();
+        $totalApproved = DB::table('loan_requests')->where('status', 'Approved')->count();
+        $totalRejected = DB::table('loan_requests')->where('status', 'Rejected')->count();
+        $totalRequests = DB::table('loan_requests')->count();
+        $totalApprovedAmount = DB::table('loan_requests')->where('status', 'Approved')->sum('request_amount');
+
+        // Paginate results
+        $loanRequests = $query->orderBy('loan_requests.created_at', 'desc')
+            ->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Loan requests retrieved successfully',
+            'data' => $loanRequests,
+            'stats' => [
+                'total' => $totalRequests,
+                'pending' => $totalPending,
+                'approved' => $totalApproved,
+                'rejected' => $totalRejected,
+                'total_amount' => $totalApprovedAmount,
+            ],
+            'filters' => [
+                'borrower_id' => $borrowerID,
+                'borrower_first_name' => $borrower_firstname,
+                'borrower_last_name' => $borrower_lastname,
+                'reason' => $reason,
+                'amount' => $amount,
+                'status' => $status,
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Error in getAllLoanRequests: ' . $e->getMessage(), ['exception' => $e]);
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to retrieve loan requests',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     public function approveLoanRequest(Request $request, $requestID)
     {
+        DB::beginTransaction();
+
         try {
-            $loanRequest = DB::table('loanRequest')->where("request_id", $requestID)->first();
+            // Fetch the loan request by ID
+            $loanRequest = DB::table('loan_requests')->where('request_id', $requestID)->first();
 
             if (!$loanRequest) {
                 return response()->json([
@@ -103,42 +120,34 @@ class LoanRequestController extends Controller
                 ], 404);
             }
 
-            // Update loan request status to Approved
+            // Update the loan request status to 'Approved'
             $updateData = [
                 'status' => 'Approved',
                 'approved_at' => now(),
                 'updated_at' => now(),
             ];
 
-            DB::table('loanRequest')->where("request_id", $requestID)->update($updateData);
+            DB::table('loan_requests')->where('request_id', $requestID)->update($updateData);
 
-            // Check if a loan has already been created for this request
-            $existingLoan = DB::table('loans')
-                ->where('BorrowerID', $loanRequest->borrower_id)
-                ->where('request_amount', $loanRequest->request_amount)
-                ->where('request_duration', $loanRequest->request_duration)
-                ->where('request_reason', $loanRequest->request_reason)
-                ->first();
+            // Insert new loan record in loans table
+            $newLoanId = DB::table('loans')->insertGetId([
+                'BorrowerID' => $loanRequest->BorrowerID,
+                'request_id' => $loanRequest->request_id,
+                'request_duration' => (int) $loanRequest->request_duration,
+                'request_reason' => $loanRequest->request_reason,
+                'request_amount' => $loanRequest->request_amount,
+                'interest_rate' => 5.0,
+                'total' => 0,
+                'status' => 'Active',
+                'approved_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-            if (!$existingLoan) {
-                // Insert new loan
-                $newLoanId = DB::table('loans')->insertGetId([
-                    'BorrowerID' => $loanRequest->borrower_id,
-                    'request_id' => $loanRequest->request_id,
-                    'request_duration' => (int) $loanRequest->request_duration,
-                    'request_reason' => $loanRequest->request_reason,
-                    'request_amount' => $loanRequest->request_amount,
-                    'interest_rate' => 5.0,
-                    'status' => 'Active',
-                    'approved_at' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            // Retrieve the newly inserted loan data for response
+            $newLoan = DB::table('loans')->where('id', $newLoanId)->first();
 
-                $newLoan = DB::table('loans')->where('id', $newLoanId)->first();
-            } else {
-                $newLoan = $existingLoan;
-            }
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -152,6 +161,11 @@ class LoanRequestController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Log the error for debugging
+            \Log::error('Loan approval failed: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to approve loan request and create loan',
@@ -165,7 +179,7 @@ class LoanRequestController extends Controller
     public function rejectLoanRequest(Request $request, $requestID)
     {
         try {
-            $loanRequest = DB::table('loanRequest')->where('request_id', $requestID)->first();
+            $loanRequest = DB::table('loan_requests')->where('request_id', $requestID)->first();
 
             if (!$loanRequest) {
                 return response()->json([
@@ -180,7 +194,7 @@ class LoanRequestController extends Controller
                 'updated_at' => now(),
             ];
 
-            DB::table('loanRequest')->where('request_id', $requestID)->update($updateData);
+            DB::table('loan_requests')->where('request_id', $requestID)->update($updateData);
 
             return response()->json([
                 'success' => true,
@@ -224,10 +238,10 @@ class LoanRequestController extends Controller
         }
     }
 
-    public function getLoanRequestById($id)
+    public function getLoanRequestById($requestId)
     {
         try {
-            $request = LoanRequest::with('borrower')->findOrFail($id);
+            $request = LoanRequest::with('borrower')->where('request_id', $requestId)->firstOrFail();
 
             return response()->json([
                 'success' => true,
@@ -241,11 +255,13 @@ class LoanRequestController extends Controller
                     'status' => $request->status,
                     'created_at' => $request->created_at,
                     'updated_at' => $request->updated_at,
-                    'borrower_firstname' => $request->borrower->first_name ?? null,
-                    'borrower_lastname' => $request->borrower->last_name ?? null,
-                    'borrower_email' => $request->borrower->email ?? null,
-                    'borrower_phone' => $request->borrower->phone_number ?? null,
-                    'borrower_credit_score' => $request->borrower->credit_score ?? null,
+                    'borrower' => [
+                        'first_name' => $request->borrower->first_name ?? null,
+                        'last_name' => $request->borrower->last_name ?? null,
+                        'email' => $request->borrower->email ?? null,
+                        'phone_number' => $request->borrower->phone_number ?? null,
+                        'credit_score' => $request->borrower->credit_score ?? null,
+                    ],
                 ],
             ], 200);
 
@@ -291,7 +307,7 @@ class LoanRequestController extends Controller
     public function getLoanStatusById($id)
     {
         try {
-            $loanRequest = DB::table('loanRequest')->where('request_id', $id)->first();
+            $loanRequest = DB::table('loan_requests')->where('request_id', $id)->first();
 
             if (!$loanRequest) {
                 return response()->json([

@@ -163,14 +163,14 @@ class BorrowerApi extends Controller
             'otp' => $randomNumber,
             'credit_score' => 100,
             'income'=>$validated['income'],
-            'status' => 'Pending',
+            'status' => 'Inactive',
             'identity_path' => $validated['identity_path'],
             'employment_path' => $validated['employment_path'],
                 ]);
                 BorrowerBalance::create([
                     'borrowerID'=> $user->id,
                     'balance' => 0,
-                    
+
                 ]);
                 $borrower = Borrower::where('email', $request->email)->first();
                 $otp = $borrower->otp;

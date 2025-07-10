@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class request_loan extends Model
 {
-    protected $table = 'loanrequest';
+    protected $table = 'loan_requests';
     protected $id= 'request_id';
     use HasFactory;
 

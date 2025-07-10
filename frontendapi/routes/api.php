@@ -48,16 +48,6 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::apiResource('loans', LoanController::class);
 });
 
-// Public admin routes - Updated to match frontend expectations
-Route::prefix('admin')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-    Route::get('/allUser', [DashboardController::class, 'showallUser']);
-    Route::post('/updateUser', [DashboardController::class, 'updateUser']);
-    Route::post('/deleteUser', [DashboardController::class, 'deleteUser']);
-    Route::get('/users', [DashboardController::class, 'showallUser']);
-    Route::put('/users/{id}', [DashboardController::class, 'updateUser']);
-    Route::delete('/users/{id}', [DashboardController::class, 'deleteUser']);
-});
 
 
 //user api
@@ -97,7 +87,7 @@ Route::get('getLenderBalance/{lenderId}', [BalanceController::class, 'getLenderB
 //Route::post('add', [BorrowerApi::class, 'loanRequestBorrower']);
 
 
-// request loan 
+// request loan
 Route::post('/storeImage', [RequestLoanController::class, 'storeImageUpload']);
 Route::post('/loanRequest', [RequestLoanController::class, 'loanRequestBorrower']);
 Route::get('/allLoan/{borrowerID}', [RequestLoanController::class, 'index']);
@@ -130,7 +120,7 @@ Route::get('getAllLoanAfterApproveforBorrower/{borrowerId}', [LoanAfterApproveCo
 // get the the loan after approve with id
 Route::get('getLoanAfterApproveforBorrower/{loanId}',[LoanAfterApproveController::class, 'showLoanAfterApproveForBorrower']);
 
-// transaction table 
+// transaction table
 Route::post('fund/{loanId}/{lenderId}', [TransactionController::class, 'fund']);
 
 // using loan after approve table
