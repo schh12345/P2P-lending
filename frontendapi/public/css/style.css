@@ -1,0 +1,146 @@
+/********** Template CSS **********/
+:root {
+    --primary: #2124B1;
+    --secondary: #4777F5;
+    --light: #F7FAFF;
+    --dark: #1D1D27;
+}
+body{
+    font-family: "Heebo", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+/*** Heading ***/
+h1,
+h2,
+h3,
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+h4,
+h5,
+h6,
+.fw-medium {
+    font-weight: 500 !important;
+}
+
+.nav-link{
+    position: relative;
+    margin-left: 25px;
+    color: var(--dark) !important;
+    outline: none;
+    transition: .5s;
+    font-weight:500 !important;
+}
+.nav-hover:hover{
+    color:var(--secondary) !important;
+    transition: .1s;
+}
+.nav-link.active {
+    color: var(--secondary) !important;
+}
+a.login{
+    width:80px;
+    text-align:right;
+    margin-left:-30px;
+    border-radius:20px;
+    color: var(--dark) !important;
+}
+.nav-link{
+    display:inline-block;
+}
+a.signUp {
+    width:80px;
+    text-align:center;
+    background-color:var(--dark) !important;
+    border-radius:20px;
+    color: white !important;
+}
+.signUp-login {
+    display:flex;
+    width:135px;
+    border-radius:20px;
+    background-color:rgb(229, 226, 226) !important;
+    
+}
+
+/* hero header */
+.bg-primary{
+    background-color:#2124B1 !important;
+}
+.hero-header {
+    background:
+        url(../img/bg-dot.png),
+        url(../img/bg-dot.png),
+        url(../img/bg-round.png),
+        url(../img/bg-tree.png);
+        
+    background-position:
+        10px 10px,
+        bottom 190px right 10px,
+        left 55% top -1px,
+        left 45% bottom -1px;
+    background-repeat: no-repeat;
+    background-size:auto;
+    
+
+}
+
+
+
+
+
+/*footer */
+.footer{
+    font-weight:500 !important;
+}
+.footer .term a{  
+    color:var(--dark);
+    text-decoration:none;
+    text-align:left;
+    margin-bottom:10px;
+    font-weight: normal;
+    transition: .3s;
+    font-weight:500 !important;
+    
+}
+.footer .term a:hover{
+    color:var(--secondary) !important;
+    transition: .3s;
+    text-decoration:underline;
+    
+}
+.footer .popular a{
+    color:var(--dark);
+    text-decoration:none;
+    display:block;
+    text-align:left;
+    margin-bottom:10px;
+    font-weight: normal;
+    transition: .3s;
+    font-weight:500 !important;
+}
+.footer .popular a:hover{
+    color:var(--secondary) !important;
+    transition: .3s;
+    text-decoration:underline;
+}
+.footer .btn.btn-social {
+    margin-right: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+    border-radius: 40px;
+    transition: .3s;
+    font-size: 1.5rem;
+}
+.footer .btn.btn-social:hover{
+    color:var(--primary);
+}
+
+
