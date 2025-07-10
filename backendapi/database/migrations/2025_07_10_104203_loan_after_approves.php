@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('lateDay')->nullable();
             $table->integer('last_penalized_day')->nullable();
             $table->double('total', 10, 2);
-            $table->enum('status', ['pending', 'active', 'completed', 'late'])->default('active')->nullable();
+            $table->enum('status', ['Pending', 'Active', 'Completed', 'Late'])->default('Active')->nullable();
             // $table->string('identity_path');
             // $table->string('employment_path');
             $table->timestamp('approved_at')->nullable();

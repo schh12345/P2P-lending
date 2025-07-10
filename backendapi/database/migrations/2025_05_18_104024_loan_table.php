@@ -17,8 +17,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('BorrowerID');
             $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
 
-            $table->unsignedBigInteger('LenderID')->nullable(); // optional if lender is assigned later
-            $table->foreign('LenderID')->references('id')->on('lenders')->onDelete('cascade');
             $table->unsignedBigInteger('request_id')->nullable();
             $table->foreign('request_id')->references('request_id')->on('loanRequest')->onDelete('cascade');
             $table->integer('request_duration')->nullable();

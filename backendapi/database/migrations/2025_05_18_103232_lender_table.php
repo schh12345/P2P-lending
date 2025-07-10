@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('credit_score');
             $table->enum('status', ['Suspended', 'Active', 'Inactive'])->default('Inactive');
             $table->enum('approval_status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->string('country')->nullable();
+            $table->string('province')->nullable();
             $table->timestamps();
 
         });

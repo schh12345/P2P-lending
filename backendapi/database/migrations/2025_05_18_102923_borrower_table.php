@@ -26,6 +26,9 @@ return new class extends Migration
             $table->enum('employment_status', ['full-time', 'part-time']);
             $table->enum('status', ['Inactive', 'Active', 'Suspended'])->default('Inactive');
             $table->enum('approval_status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->string('profile_path')->nullable();
+            $table->string('country')->nullable();
+            $table->string('province')->nullable();
             $table->timestamps();
         });
 

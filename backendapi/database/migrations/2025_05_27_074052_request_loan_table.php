@@ -18,9 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('BorrowerID');
             $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
 
-            $table->unsignedBigInteger('LenderID')->nullable(); // Nullable until a lender accepts the request
-            $table->foreign('LenderID')->references('id')->on('lenders')->onDelete('cascade');
-
             $table->double('request_amount');
             $table->integer('request_duration')->nullable(); // Duration in months (for example)
             $table->text('request_reason');
@@ -31,12 +28,6 @@ return new class extends Migration
             $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Active', 'Completed'])->default('Pending');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-
-
-            $table->string('employment_status')->nullable();
-            $table->double('income')->nullable();
-            $table->string('identity_path')->nullable();
-            $table->string('employment_path')->nullable();
 
 
             $table->timestamps(); // created_at, updated_at
