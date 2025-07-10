@@ -165,14 +165,7 @@ watchEffect(() => {
                         <User class="w-4 h-4" />
                         <span>Account Settings</span>
                     </button>
-                    <button @click="navigateTo('/admin/settings/platform-settings')" :class="getClass('/admin/settings/platform-settings')">
-                        <Monitor class="w-4 h-4" />
-                        <span>Platform Settings</span>
-                    </button>
-                    <button @click="navigateTo('/admin/settings/loan-configuration')" :class="getClass('/admin/settings/loan-configuration')">
-                        <Sliders class="w-4 h-4" />
-                        <span>Loan Configuration</span>
-                    </button>
+
                 </div>
             </div>
         </div>

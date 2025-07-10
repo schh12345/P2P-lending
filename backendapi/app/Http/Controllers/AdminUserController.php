@@ -147,14 +147,16 @@ class AdminUserController extends Controller
             }
 
             $userData = $user->toArray();
-            $baseUrl = rtrim(config('app.url'), '/') . '/';
+
+            // Point to frontendapi for file URLs
+            $frontendUrl = rtrim(config('app.frontend_url', 'http://localhost:8000'), '/') . '/';
 
             if (!empty($userData['identity_path']) && !str_starts_with($userData['identity_path'], 'http')) {
-                $userData['identity_path'] = $baseUrl . ltrim($userData['identity_path'], '/');
+                $userData['identity_path'] = $frontendUrl . ltrim($userData['identity_path'], '/');
             }
 
             if (!empty($userData['employment_path']) && !str_starts_with($userData['employment_path'], 'http')) {
-                $userData['employment_path'] = $baseUrl . ltrim($userData['employment_path'], '/');
+                $userData['employment_path'] = $frontendUrl . ltrim($userData['employment_path'], '/');
             }
 
             $userData['user_display_status'] = $userData['approval_status'] !== 'Pending'
@@ -168,7 +170,6 @@ class AdminUserController extends Controller
             return response()->json(['error' => 'Server error'], 500);
         }
     }
-
 
 
     /**
@@ -191,6 +192,7 @@ class AdminUserController extends Controller
 
             $user->status = 'Active';
             $user->approval_status = 'Approved';
+            Mail::to($user->email)->send(new notifyUser());
             $user->save();
 
             // Create balance record if it doesn't exist
