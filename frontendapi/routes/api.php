@@ -66,6 +66,9 @@ Route::post('/borrower/verifyOTP', [BorrowerApi::class, 'verifyOTPBorrower'])->m
 Route::middleware('auth:sanctum')->get('/borrower', function (Request $request) {
     return response()->json($request->user('borrower'));
 });
+Route::post('/storeImageForEdit', [BorrowerApi::class, 'storeImageUpload']);
+Route::post('/editProfileforBorrower', [BorrowerApi::class, 'editProfile']);
+
 
 // get balance for borrower
 Route::get('getBorrowerBalance/{borrowerId}', [BalanceController::class, 'getBalanceController']);

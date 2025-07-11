@@ -9,6 +9,12 @@ export const borrowerProfileData = async () => {
     const phone_number=borrower.value?.phone_number;
     const credit_score=borrower.value?.credit_score;
     const amount=borrower.value?.amount
+    const income=borrower.value?.income;
+    const employment_status=borrower.value?.employment_status;
+    const employment_path=borrower.value?.employment_path;
+    const identity_path=borrower.value?.identity_path;
+    const profile_path=borrower.value?.profile_path;
+    const province=borrower.value?.province;
 
     const initial_first_name=computed(()=>first_name?.charAt(0).toUpperCase())
     const initial_last_name=computed(()=> last_name?.charAt(0).toUpperCase())
@@ -29,6 +35,12 @@ export const borrowerProfileData = async () => {
         credit_score,
         initial_first_name,
         initial_last_name,
-        randomBg
+        randomBg,
+        income,
+        employment_path,
+        employment_status,
+        identity_path,
+        profile_path,
+        province,
     }
 };

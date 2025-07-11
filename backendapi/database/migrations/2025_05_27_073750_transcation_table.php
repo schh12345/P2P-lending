@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        schema::create('transactions', function (Blueprint $table) {
-            $table->id('transaction_id');
-            $table->foreignId('borrower_id')->constrained()->onDelete('cascade');
-            $table->foreignId('lender_id')->constrained()->onDelete('cascade');
-            $table->double('amount');
-            $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamp('completed_at')->nullable();
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('LenderID');
+            $table->unsignedBigInteger('BorrowerID');
+            $table->decimal('amount', 15, 2);
+            $table->enum('type', ['fund', 'repayment', 'withdrawal']);
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->text('description')->nullable();
             $table->timestamps();
 
+            // Foreign keys
+            $table->foreign('LenderID')->references('id')->on('lenders')->onDelete('cascade');
+            $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
         });
     }
 
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        schema::dropIfExists('transactions');
+        Schema::dropIfExists('transactions');
     }
 };

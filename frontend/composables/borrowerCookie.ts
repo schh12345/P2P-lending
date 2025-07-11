@@ -9,6 +9,12 @@ export const borrowerCookie = async ()=>{
     phone_number:string,
     amount:number,
     credit_score:number,
+    income:number,
+    employment_status:string,
+    employment_path:string,
+    identity_path:string,
+    profile_path:string,
+    province:string
   }
   const borrower = useState<BorrowerResponse | null >('borrower', () => null)
   const token = useAuth()

@@ -77,19 +77,47 @@ class BorrowerApi extends Controller
     //storing the image that borrower upload in the public/storage/uploads
    public function storeImageUpload(Request $request)
     {
+       try {
+        // ✅ Make validation more flexible
         $request->validate([
-            'identity' => 'required|image|max:2048',
-            'employment' => 'required|image|max:2048',
+            'profileUpload' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'employment' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $identityPath = $request->file('identity')->store('uploads', 'public');
-        $employmentPath = $request->file('employment')->store('uploads', 'public');
+        $response = [];
 
-        return response()->json([
-            'identity_path' => "/storage/$identityPath",
-            'employment_path' => "/storage/$employmentPath",
-        ]);
+        // ✅ Handle identity file if present
+        if ($request->hasFile('profileUpload')) {
+            $identityFile = $request->file('profileUpload');
+            if ($identityFile->isValid()) {
+                $identityPath = $identityFile->store('uploads', 'public');
+                $response['profile_path'] = "/storage/$identityPath";
+            }
+        }
+
+        // ✅ Handle employment file if present
+        if ($request->hasFile('employment')) {
+            $employmentFile = $request->file('employment');
+            if ($employmentFile->isValid()) {
+                $employmentPath = $employmentFile->store('uploads', 'public');
+                $response['employment_path'] = "/storage/$employmentPath";
+            }
+        }
+
+        // ✅ Return response only if files were processed
+        if (empty($response)) {
+            return response()->json(['error' => 'No valid files uploaded'], 400);
+        }
+
+        return response()->json($response, 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'File upload failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 
 
 
@@ -267,4 +295,44 @@ class BorrowerApi extends Controller
 
     }
     */
+
+    public function editProfile(Request $request)
+{
+    $validated = $request->validate([
+        'firstname'          => 'nullable|string',
+        'lastname'           => 'nullable|string',
+        'email'              => 'nullable|email',
+        'phone_number'       => 'nullable|string',
+        'income'             => 'nullable|numeric',
+        'employment_status'  => 'nullable|string',
+        'profile_path'       => 'nullable|string',
+        'province'           => 'nullable|string',
+        'employment_path'    => 'nullable|string', // path, not a file
+        'borrowerId'=>'required',
+    ]);
+
+    $borrower = Borrower::find($validated['borrowerId']);
+
+    if (!$borrower) {
+        return response()->json(['message' => 'Borrower not found'], 404);
+    }
+
+    // Update fields
+    $borrower->first_name = $validated['firstname'];
+    $borrower->last_name = $validated['lastname'];
+    $borrower->email = $validated['email'];
+    $borrower->phone_number = $validated['phone_number'];
+    $borrower->income = $validated['income'];
+    $borrower->employment_status = $validated['employment_status'];
+    $borrower->province = $validated['province'];
+    $borrower->employment_path = $validated['employment_path'] ?? $borrower->employment_path;
+    $borrower->profile_path = $validated['profile_path'];
+
+    $borrower->save();
+
+    return response()->json([
+        'message' => 'Profile updated successfully',
+        'data' => $borrower
+    ]);
+}
 }
