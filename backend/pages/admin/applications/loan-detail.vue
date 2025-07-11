@@ -33,7 +33,7 @@
       </div>
 
       <!-- Pending Loan Request -->
-      <div v-else-if="loanStatus === 'Pending' && loanRequest && Object.keys(loanRequest).length" class="space-y-6">
+      <div v-else-if="isStatus('Pending') && loanRequest && Object.keys(loanRequest).length" class="space-y-6">
         <!-- Status Badge -->
         <div class="bg-white rounded-lg shadow-sm p-6">
           <div class="flex items-center justify-between">
@@ -96,7 +96,7 @@
       </div>
 
       <!-- Approved Loan -->
-      <div v-else-if="loanStatus === 'Approved' && approvedLoan && Object.keys(approvedLoan).length" class="space-y-6">
+      <div v-else-if="isStatus('Approved') && approvedLoan && Object.keys(approvedLoan).length" class="space-y-6">
         <!-- Status Badge -->
         <div class="bg-white rounded-lg shadow-sm p-6">
           <div class="flex items-center justify-between">
@@ -107,31 +107,78 @@
           </div>
         </div>
 
+        <!-- Borrower Information -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Borrower And Loan Information</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <div>
+                <label class="text-sm font-medium text-gray-500">Borrower ID</label>
+                <p class="text-gray-900 font-medium">{{ approvedLoan.BorrowerID }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-gray-500">Request ID</label>
+                <p class="text-gray-900">{{ approvedLoan.request_id }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Loan Details -->
         <div class="bg-white rounded-lg shadow-sm p-6">
           <h3 class="text-lg font-semibold text-gray-800 mb-4">Loan Information</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-blue-50 p-4 rounded-lg">
               <label class="text-sm font-medium text-blue-600">Loan Amount</label>
-              <p class="text-2xl font-bold text-blue-800">${{ formatNumber(approvedLoan.amount) }}</p>
+              <p class="text-2xl font-bold text-blue-800">${{ formatNumber(approvedLoan.request_amount) }}</p>
             </div>
             <div class="bg-green-50 p-4 rounded-lg">
               <label class="text-sm font-medium text-green-600">Interest Rate</label>
               <p class="text-2xl font-bold text-green-800">{{ approvedLoan.interest_rate }}%</p>
             </div>
             <div class="bg-purple-50 p-4 rounded-lg">
-              <label class="text-sm font-medium text-purple-600">Start Date</label>
-              <p class="text-lg font-bold text-purple-800">{{ formatDate(approvedLoan.start_date) }}</p>
+              <label class="text-sm font-medium text-purple-600">Duration</label>
+              <p class="text-lg font-bold text-purple-800">{{ approvedLoan.request_duration }} months</p>
             </div>
             <div class="bg-orange-50 p-4 rounded-lg">
-              <label class="text-sm font-medium text-orange-600">Payment Date</label>
-              <p class="text-lg font-bold text-orange-800">{{ formatDate(approvedLoan.payment_date) }}</p>
+              <label class="text-sm font-medium text-orange-600">Total Amount</label>
+              <p class="text-lg font-bold text-orange-800">${{ formatNumber(approvedLoan.total) }}</p>
             </div>
           </div>
-          <div class="mt-4">
-            <label class="text-sm font-medium text-gray-500">Current Status</label>
-            <p class="text-gray-900 mt-1 p-3 bg-gray-50 rounded-lg">{{ approvedLoan.status }}</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Loan Timeline</h3>
+          <div class="space-y-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">Request Created</p>
+                <p class="text-sm text-gray-500">{{ formatDateTime(approvedLoan.created_at) }}</p>
+              </div>
+            </div>
+            <div v-if="approvedLoan.approved_at" class="flex items-center space-x-3">
+              <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">Approved</p>
+                <p class="text-sm text-gray-500">{{ formatDateTime(approvedLoan.approved_at) }}</p>
+              </div>
+            </div>
+            <div v-if="approvedLoan.completed_at" class="flex items-center space-x-3">
+              <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">Completed</p>
+                <p class="text-sm text-gray-500">{{ formatDateTime(approvedLoan.completed_at) }}</p>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- Loan Reason -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Loan Reason</h3>
+          <p class="text-gray-900 p-3 bg-gray-50 rounded-lg">{{ approvedLoan.request_reason }}</p>
         </div>
       </div>
 
@@ -259,9 +306,9 @@ const loanStatus = ref(null); // Status of the loan
 
 const goBack = () => router.push('/admin/applications/loan-management');
 
-// Helper functions for formatting
+// Helper functions
 const formatNumber = (number) => {
-  if (!number) return '0';
+  if (!number) return '0.00';
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
@@ -288,34 +335,44 @@ const formatDateTime = (dateString) => {
   });
 };
 
+const isStatus = (status) => {
+  return loanStatus.value?.toLowerCase() === status.toLowerCase();
+};
+
 const fetchLoanDetails = async () => {
   try {
     loading.value = true;
     error.value = null;
 
-    // First get the loan status
     const statusRes = await $axios.get(`/admin/loan-requests/${requestId}/status`);
     loanStatus.value = statusRes.data.data.status;
 
-    // Then fetch the appropriate data based on status
-    if (loanStatus.value === 'Pending') {
+    console.log('Raw Status Response:', statusRes.data.data.status);
+
+    const normalizedStatus = loanStatus.value?.toLowerCase();
+
+    if (normalizedStatus === 'pending') {
       const res = await $axios.get(`/admin/loan-requests/${requestId}`);
       loanRequest.value = res.data.data;
 
-      // Debug logging
-      console.log('Loan Request Data:', res.data.data);
-      console.log('Borrower Data:', res.data.data.borrower);
-      console.log('Request Amount:', res.data.data.request_amount);
-    } else if (loanStatus.value === 'Approved') {
-      const res = await $axios.get(`/admin/loans/${requestId}`);
+      console.log('Loan Status:', loanStatus.value);
+      console.log('Loan Request Data:', JSON.parse(JSON.stringify(loanRequest.value)));
+
+    } else if (normalizedStatus === 'approved') {
+      const res = await $axios.get(`/admin/loans/request/${requestId}`);
       approvedLoan.value = res.data.data;
-      console.log('Approved Loan Data:', res.data.data);
+
+      console.log('Loan Status:', loanStatus.value);
+      console.log('Approved Loan Data:', JSON.parse(JSON.stringify(approvedLoan.value)));
+
     } else {
-      // For completed or other statuses
       const res = await $axios.get(`/admin/loan-after-approves/${requestId}`);
       loanAfterApprove.value = res.data.data;
-      console.log('After Approve Data:', res.data.data);
+
+      console.log('Loan Status:', loanStatus.value);
+      console.log('Loan After Approve Data:', JSON.parse(JSON.stringify(loanAfterApprove.value)));
     }
+
   } catch (err) {
     console.error('Error fetching loan details:', err);
     error.value = err.response?.data?.message || 'Failed to load loan details';

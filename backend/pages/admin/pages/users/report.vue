@@ -65,7 +65,7 @@
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <p class="text-sm font-medium text-gray-500">Credit Score</p>
-              <span :class="`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${user.credit_score >= 700 ? 'bg-green-100 text-green-800' : user.credit_score >= 600 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`">
+              <span :class="`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${user.credit_score >= 80 ? 'bg-green-100 text-green-800' : user.credit_score >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`">
                 {{ user.credit_score || 'N/A' }}
               </span>
             </div>
@@ -195,7 +195,7 @@
                 <img
                     :src="user.identity_path"
                     alt="Identity Document"
-                    class="max-w-full h-auto rounded-md shadow-md"
+                    class="max-w-full max-h-80 object-contain rounded-md shadow-md"
                 />
               </template>
             </div>
@@ -217,7 +217,7 @@
                 <img
                     :src="user.employment_path"
                     alt="Employment Document"
-                    class="max-w-full h-auto rounded-md shadow-md"
+                    class="max-w-full max-h-80 object-contain rounded-md shadow-md"
                 />
               </template>
             </div>

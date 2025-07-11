@@ -356,6 +356,29 @@ class LoanRequestController extends Controller
             ], 500);
         }
     }
+    public function getLoanByRequestId($requestId)
+    {
+        try {
+            $loan = DB::table('loan_requests')->where('request_id', $requestId)->first();
 
+            if (!$loan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Loan not found for request ID',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $loan,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve loan by request ID',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 }

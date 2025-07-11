@@ -65,6 +65,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/loan-requests/{id}', [LoanRequestController::class, 'getLoanRequestById']);
         Route::get('/loan-requests/{id}/status', [LoanRequestController::class, 'getLoanStatusById']);
         Route::get('/loans/{id}', [LoanRequestController::class, 'getLoanById']);
+        Route::get('/loans/request/{requestId}', [LoanRequestController::class, 'getLoanByRequestId']);
+
 
         // Revenue statistics
         Route::get('/monthly-revenue', [RevenueController::class, 'getMonthlyRevenue']);
