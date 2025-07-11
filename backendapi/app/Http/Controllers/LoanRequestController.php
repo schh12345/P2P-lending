@@ -128,6 +128,8 @@ class LoanRequestController extends Controller
             ];
 
             DB::table('loan_requests')->where('request_id', $requestID)->update($updateData);
+            $interestRate = 5.0;
+            $total = $loanRequest->request_amount + ($loanRequest->request_amount * $interestRate / 100);
 
             // Insert new loan record in loans table
             $newLoanId = DB::table('loans')->insertGetId([
@@ -136,8 +138,8 @@ class LoanRequestController extends Controller
                 'request_duration' => (int) $loanRequest->request_duration,
                 'request_reason' => $loanRequest->request_reason,
                 'request_amount' => $loanRequest->request_amount,
-                'interest_rate' => 5.0,
-                'total' => 0,
+                'interest_rate' => $interestRate,
+                'total' => $total,
                 'status' => 'Active',
                 'approved_at' => now(),
                 'created_at' => now(),
@@ -248,7 +250,7 @@ class LoanRequestController extends Controller
                 'message' => 'Loan request retrieved successfully',
                 'data' => [
                     'request_id' => $request->request_id,
-                    'borrower_id' => $request->borrower_id,
+                    'borrower_id' => $request->BorrowerID,
                     'request_duration' => $request->request_duration,
                     'request_amount' => $request->request_amount,
                     'request_reason' => $request->request_reason,
@@ -273,7 +275,6 @@ class LoanRequestController extends Controller
             ], 500);
         }
     }
-
     public function showLoanAfterApprove($requestID)
     {
         $loan = DB::table('loan_after_approves')

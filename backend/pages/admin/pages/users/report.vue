@@ -18,7 +18,6 @@
           <div class="text-red-600 mb-2 text-lg font-semibold">
             Please access this page through User Management.
           </div>
-          <button @click="goBack" class="text-indigo-600 hover:text-indigo-500 text-sm font-medium mt-4">Back to User Management</button>
         </div>
       </div>
 
@@ -278,8 +277,14 @@ const isPdf = (path) => {
 };
 const fetchUserLoans = async () => {
   try {
-    activeLoans.value = Math.floor(Math.random() * 5) + 1;
-    totalLoanAmount.value = Math.floor(Math.random() * 50000) + 10000;
+    const response = await $axios.get(`/admin/users/${tableType}/${userId}/active-loans`);
+    if (response.data.success) {
+      activeLoans.value = response.data.data.active_loans;
+      totalLoanAmount.value = response.data.data.total_amount;
+    } else {
+      activeLoans.value = 0;
+      totalLoanAmount.value = 0;
+    }
   } catch (err) {
     console.error('Error fetching user loans:', err);
     activeLoans.value = 0;

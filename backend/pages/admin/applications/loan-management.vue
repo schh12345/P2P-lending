@@ -222,9 +222,9 @@
               <td class="px-6 py-4">
                   <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                         :class="{
-                          'bg-green-100 text-green-800': request.borrower_credit_score >= 700,
-                          'bg-yellow-100 text-yellow-800': request.borrower_credit_score >= 600 && request.borrower_credit_score < 700,
-                          'bg-red-100 text-red-800': request.borrower_credit_score < 600
+                          'bg-green-100 text-green-800': request.borrower_credit_score >= 80,
+                          'bg-yellow-100 text-yellow-800': request.borrower_credit_score >= 50 && request.borrower_credit_score < 79,
+                          'bg-red-100 text-red-800': request.borrower_credit_score < 49
                         }">
                     {{ request.borrower_credit_score }}
                   </span>

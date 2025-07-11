@@ -43,7 +43,7 @@ class loanRequest extends Model
 
     public function borrower()
     {
-        return $this->belongsTo(Borrower::class, 'borrower_id');
+        return $this->belongsTo(Borrower::class, 'BorrowerID', 'id');
     }
 
     // Relationship with approver (from users table)

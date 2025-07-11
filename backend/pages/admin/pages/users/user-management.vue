@@ -629,6 +629,7 @@ const handleSelectAll = () => {
 const getDisplayStatus = (user) => {
   // If suspended, always show status (which is "Suspended")
   if (user.status === 'Suspended') return user.status;
+  if (user.status === 'Inactive') return user.status;
 
   if (user.approval_status === 'Pending') return 'Pending';
   if (user.approval_status === 'Approved' && user.status !== 'Active') return 'Approved';

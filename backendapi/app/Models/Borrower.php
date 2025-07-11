@@ -11,6 +11,9 @@ class Borrower extends Model
 {
     use HasFactory, HasApiTokens, Notifiable;
 
+    protected $primaryKey = 'id';
+    protected $table = 'borrowers';
+
     protected $fillable = [
         'first_name',
         'last_name',

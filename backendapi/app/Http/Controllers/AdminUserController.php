@@ -584,5 +584,47 @@ class AdminUserController extends Controller
             Log::error('Error fetching stats: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch statistics'], 500);}
     }
+    public function getUserActiveLoans($tableType, $userId)
+    {
+        try {
+            if ($tableType === 'borrower') {
+                $activeLoans = DB::table('loan_after_approves')
+                    ->where('BorrowerID', $userId)
+                    ->where('status', 'Active')
+                    ->count();
+
+                $totalAmount = DB::table('loan_after_approves')
+                    ->where('BorrowerID', $userId)
+                    ->where('status', 'Active')
+                    ->sum('amount');
+            } elseif ($tableType === 'lender') {
+                $activeLoans = DB::table('loan_after_approves')
+                    ->where('LenderID', $userId)
+                    ->where('status', 'Active')
+                    ->count();
+
+                $totalAmount = DB::table('loan_after_approves')
+                    ->where('LenderID', $userId)
+                    ->where('status', 'Active')
+                    ->sum('approved_amount');
+            } else {
+                return response()->json(['error' => 'Invalid user type'], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'active_loans' => $activeLoans,
+                    'total_amount' => $totalAmount,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch active loan data',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 }
