@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\BorrowerMail;
 
 class BorrowerApi extends Controller
+
 {
     public function changePhoneNumber(Request $request) {
         $validated = $request->validate([
@@ -174,7 +175,7 @@ class BorrowerApi extends Controller
                 ]);
                 $borrower = Borrower::where('email', $request->email)->first();
                 $otp = $borrower->otp;
-                //Mail::to($borrower->email)->send(new BorrowerMail($otp));
+                Mail::to($borrower->email)->send(new BorrowerMail($otp));
             $token = $user->createToken('api-token')->plainTextToken;
 
             return response()->json([

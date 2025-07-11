@@ -32,7 +32,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('BorrowerBalance', function(Blueprint $table){
+        Schema::create('borrowerbalance', function(Blueprint $table){
             $table->id();
             $table->unsignedBigInteger('borrowerID');
             $table->double('balance');

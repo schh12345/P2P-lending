@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamps();
 
         });
-        Schema::create('LenderBalance', function(Blueprint $table){
+        Schema::create('lenderbalance', function(Blueprint $table){
             $table->id();
             $table->unsignedBigInteger('LenderID');
             $table->double('balance');

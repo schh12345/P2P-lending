@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\lenderMail;
 
 class LenderApi extends Controller
 {
@@ -115,6 +117,9 @@ class LenderApi extends Controller
             'balance'=>10000,
             'LenderID'=>$user->id,
         ]);
+        $user = Lender::where('email', $request->email)->first();
+        $otp = $user->otp;
+        Mail::to($user->email)->send(new lenderMail($otp));
     $token = $user->createToken('api-token')->plainTextToken;
 
     return response()->json([
