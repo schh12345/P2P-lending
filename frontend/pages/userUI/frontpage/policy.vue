@@ -67,6 +67,25 @@ Heng, [10/7/25 9:53 ]
         </p>
       </section>
 
+       <!-- New Section -->
+      <section>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">7. Late Repayment & Credit Score Impact</h2>
+        <p class="text-gray-700">
+          To maintain fairness and encourage responsible borrowing, we apply a credit score reduction policy for borrowers who fail to repay their loans on time. This policy helps lenders assess borrower risk and supports a healthy lending environment.
+        </p>
+        <ul class="list-disc list-inside text-gray-700 space-y-1 mt-2">
+          <li><strong>Grace Period:</strong> Borrowers are given a short grace period after the due date to complete repayment without penalty.</li>
+          <li><strong>Credit Score Reduction:</strong> If repayment is not made within the grace period, the borrower's credit score will be reduced 5 credit score if borrower late within 5 day. And continue to deduce 5 credit score in the next next 5 day until you payback the total amount to the lenders</li>
+          <li><strong>Interest Rate Impact:</strong> In our Peer to Peer Lending Plateform, the interest will set by our system and the borrower can not input by themself. We wiil set the interest rate for every time you make loan request base on your current credit score.</li>
+          <li class="ml-10"> Credit Score between 70 to 100 => Interest Rate = 5.0% </li>
+          <li class="ml-10"> Credit Score below 70 => Interest Rate = 6.5% </li>
+          <li><strong>Redemption:</strong> Borrowers may gradually rebuild their score through timely repayments in future loans.</li>
+        </ul>
+        <p class="text-gray-700 mt-2">
+          This system encourages accountability while allowing room for recovery and continued access to the platform.
+        </p>
+      </section>
+
       <section>
         <h2 class="text-xl font-semibold text-gray-800 mb-2">6. Contact Us</h2>
         <p class="text-gray-700">

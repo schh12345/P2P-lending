@@ -11,13 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // schema::create('transactions', function (Blueprint $table) {
+        //     $table->id('transaction_id');
+        //     $table->foreignId('borrower_id')->constrained()->onDelete('cascade');
+        //     $table->foreignId('lender_id')->constrained()->onDelete('cascade');
+        //     $table->double('amount');
+        //     $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
+        //     $table->timestamp('approved_at')->nullable();
+        //     $table->timestamp('completed_at')->nullable();
+        //     $table->timestamps();
+
+        // });
+
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('LenderID');
             $table->unsignedBigInteger('BorrowerID');
             $table->decimal('amount', 15, 2);
             $table->enum('type', ['fund', 'repayment', 'withdrawal']);
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'failed' , 'active'])->default('active');
             $table->text('description')->nullable();
             $table->timestamps();
 

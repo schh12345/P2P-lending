@@ -61,8 +61,14 @@ Route::post('verifyOTP', [LoginController::class, 'verifyOTP'])->middleware('aut
 Route::get('listAllBorrower', [BorrowerApi::class, 'listAllBorrower']);
 Route::post('/borrower/register', [BorrowerApi::class, 'registerBorrower']);
 Route::post('/borrower/login', [BorrowerApi::class, 'loginBorrower']);
+Route::get('ApproveForBorrower', [BorrowerApi::class, 'getApprove']);
 Route::post('/borrower/logout', [BorrowerApi::class, 'logoutBorrower'])->middleware('auth:borrower');
 Route::post('/borrower/verifyOTP', [BorrowerApi::class, 'verifyOTPBorrower'])->middleware('auth:borrower');
+Route::middleware(['auth:sanctum', 'verified_user'])->group(function () {
+    Route::get('/dashboard', function () {
+        return response()->json(['message' => 'Welcome to the dashboard']);
+    });
+});
 Route::middleware('auth:sanctum')->get('/borrower', function (Request $request) {
     return response()->json($request->user('borrower'));
 });
@@ -82,6 +88,8 @@ Route::post('/lender/verifyOTP', [LenderApi::class, 'verifyOTPLender'])->middlew
 Route::middleware('auth:sanctum')->get('/lender', function (Request $request) {
     return response()->json($request->user('lender'));
 });
+Route::post('storeImageForEditLender', [LenderApi::class, 'storeImageUploadForLender']);
+Route::post('editProfileforLender', [LenderApi::class, 'editProfileLender']);
 
 // get balance for lender
 Route::get('getLenderBalance/{lenderId}', [BalanceController::class, 'getLenderBalance']);

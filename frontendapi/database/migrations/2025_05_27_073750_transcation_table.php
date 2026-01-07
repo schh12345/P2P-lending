@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('BorrowerID');
             $table->decimal('amount', 15, 2);
             $table->enum('type', ['fund', 'repayment', 'withdrawal']);
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'failed' , 'active'])->default('active');
             $table->text('description')->nullable();
             $table->timestamps();
 

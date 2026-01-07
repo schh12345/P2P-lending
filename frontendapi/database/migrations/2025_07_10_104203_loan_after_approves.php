@@ -11,27 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loans', function (Blueprint $table) {
-            $table->id();
-            //$table->foreignId('borrower_id')->constrained()->onDelete('cascade');
-            //$table->foreignId('lender_id')->constrained()->onDelete('cascade');
-            //$table->double('amount')->nullable();
-            $table->double('amount');
-            $table->integer('duration');
-            $table->text('reason');
-            $table->float('interest_rate');
-            $table->text ('employment_status');
-            $table->float('income');
-            $table->string('identity_path');
-            $table->string('employment_path');
-            $table->enum('status', ['pending', 'funded'])->default('pending')->nullable();
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamp('completed_at')->nullable();
-            $table->timestamps(); // includes created_at and updated_at
-
-            $table->unsignedBigInteger('BorrowerID');
-            $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
-        });
         Schema::create('loan_after_approves', function (Blueprint $table) {
             $table->id();
             //$table->foreignId('borrower_id')->constrained()->onDelete('cascade');
@@ -44,14 +23,18 @@ return new class extends Migration
             $table->float('income');
             $table->timestamp('start_date');
             $table->timestamp('payment_date');
-            $table->double('total');
-            $table->enum('status', ['active', 'completed', 'late'])->default('active')->nullable();
-            $table->string('identity_path');
-            $table->string('employment_path');
+            $table->integer('lateDay')->nullable();
+            $table->integer('last_penalized_day')->nullable();
+            $table->double('total', 10, 2);
+            $table->enum('status', ['Pending', 'Active', 'Completed', 'Late'])->default('Active')->nullable();
+            // $table->string('identity_path');
+            // $table->string('employment_path');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps(); // includes created_at and updated_at
+            $table->unsignedBigInteger('request_id')->nullable();
 
+            $table->foreign('request_id')->references('request_id')->on('loan_requests')->onDelete('cascade');
 
             $table->unsignedBigInteger('BorrowerID');
             $table->unsignedBigInteger('LenderID');
@@ -59,16 +42,13 @@ return new class extends Migration
             $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
             $table->foreign('LenderID')->references('id')->on('lenders')->onDelete('cascade');
         });
-
-
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('loans');
+        schema::dropIfExists('loan_after_approves');
     }
 };

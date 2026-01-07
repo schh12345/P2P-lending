@@ -166,18 +166,92 @@ class LenderApi extends Controller
         ]);
 
         if ($user->otp === $request->otp) {
+            $user->otp_verified = true;
+            $user->save();
             return response()->json([
 
-                'message' => 'otp verified'
+                'approve' => 'otp verified'
 
             ]);
         } else {
             return response()->json([
-                'message' => 'invalid otp'
+                'reject' => 'invalid otp'
             ]);
         }
 
 
         //return response()->json(['message' => 'otp verified']);
+    }
+
+    public function storeImageUploadForLender(Request $request) {
+         try {
+        // ✅ Make validation more flexible
+        $request->validate([
+            'profileUpload' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            
+        ]);
+
+        $response = [];
+
+        // ✅ Handle identity file if present
+        if ($request->hasFile('profileUpload')) {
+            $identityFile = $request->file('profileUpload');
+            if ($identityFile->isValid()) {
+                $identityPath = $identityFile->store('uploads', 'public');
+                $response['profile_path'] = "/storage/$identityPath";
+            }
+        }
+
+        
+
+        // ✅ Return response only if files were processed
+        if (empty($response)) {
+            return response()->json(['error' => 'No valid files uploaded'], 400);
+        }
+
+        return response()->json($response, 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'File upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function editProfileLender(Request $request) {
+        $validated = $request->validate([
+        'firstname'          => 'nullable|string',
+        'lastname'           => 'nullable|string',
+        'email'              => 'nullable|email',
+        'phone_number'       => 'nullable|string',
+        
+        'profile_path'       => 'nullable|string',
+        'province'           => 'nullable|string',
+       
+        'lenderId'=>'required',
+    ]);
+
+    $lender = Lender::find($validated['lenderId']);
+
+    if (!$lender) {
+        return response()->json(['message' => 'Borrower not found'], 404);
+    }
+
+    // Update fields
+    $lender->first_name = $validated['firstname'];
+    $lender->last_name = $validated['lastname'];
+    $lender->email = $validated['email'];
+    $lender->phone_number = $validated['phone_number'];
+    
+    $lender->province = $validated['province'];
+    
+    $lender->profile_picture = $validated['profile_path'];
+
+    $lender->save();
+
+    return response()->json([
+        'message' => 'Profile updated successfully',
+        'data' => $lender
+    ]);
     }
 }

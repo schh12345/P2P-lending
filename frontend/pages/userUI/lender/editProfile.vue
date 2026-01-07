@@ -1,311 +1,408 @@
 <template>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <div class="bg-white rounded-b-lg border-b-1 border-gray-300">
+      <div class="space-y-1 p-10">
+        <!-- Upload Input -->
+        <label class="block text-lg font-medium">Upload you profile</label>
 
-    
-        <div class="max-w-7xl mx-auto m-10 px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+        <p v-if="errors.imageFile" class="text-red-500 text-sm mt-1">
+          {{ errors.imageFile }}
+        </p>
 
-            <div class="bg-white rounded-t-lg border-b-1 border-gray-300">
-                <div class="md:flex justify-between items-center p-5">
-                    <div class="">
-                        <p class="text-gray-900 font-semibold text-xl">Edit Profile</p>
-                        <p class="text-gray-700 font-normal text-md">Update you personal infomation</p>
-                    </div>
-                    <div class="flex justify-center items-center gap-x-5">
-                        <button class="py-2 px-10 bg-gray-400 hover:bg-gray-500 text-gray-900 rounded-lg">Cancel</button>
-                        <button class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">Save Change</button>
-                    </div>
-                </div>
+        <!-- Hidden File Input -->
+        <input
+          type="file"
+          ref="fileInputRef"
+          @change="handleFileChange"
+          accept="image/*"
+          class="hidden"
+        />
+
+        <!-- Circle Preview: Image or Initials -->
+        <div class="mt-4 flex justify-start">
+          <!-- Show image if profile_path exists -->
+          <div
+            v-if="imagePreview"
+            @click="openModal"
+            class="rounded-full shadow w-32 h-32 object-cover cursor-pointer hover:opacity-80 transition overflow-hidden"
+          >
+            <img
+              :src="imagePreview"
+              alt="Preview"
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <!-- Show initials if no image -->
+          <div
+            v-else
+            :class="`w-32 h-32 rounded-full ${randomBg} flex items-center justify-center text-3xl font-bold text-white shadow`"
+          >
+            {{ initial_first_name }}{{ initial_last_name }}
+          </div>
+        </div>
+
+        <!-- Fullscreen Modal -->
+        <div
+          v-if="isModalOpen"
+          class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+          @click.self="closeModal"
+        >
+          <img
+            :src="imagePreview ?? undefined"
+            alt="Full View"
+            class="max-w-full max-h-full rounded shadow-xl"
+          />
+          <button
+            @click="closeModal"
+            class="absolute top-4 right-4 text-white text-2xl bg-gray-700/70 p-2 rounded-full hover:bg-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <!-- Custom File Input -->
+        <div
+          class="mt-5 flex items-center justify-start gap-x-3 rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-600"
+        >
+          <button
+            type="button"
+            @click="triggerFileInput"
+            class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+          >
+            Choose File
+          </button>
+          <div class="text-2xl object-center text-center">|</div>
+          <span class="text-gray-600 text-sm truncate max-w-xs">{{
+            fileName
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!--change personal infomation-->
+    <div class="bg-white rounded-b-lg p-t">
+      <div class="p-5">
+        <div>
+          <p class="text-gray-800 text-xl font-semibold">
+            Personal Information
+          </p>
+        </div>
+        <form @submit.prevent="handlesubmit" class="">
+          <div class="flex justify-start gap-x-10 mt-8">
+            <!--first name-->
+            <div class="w-full">
+              <label
+                for="firstname"
+                class="block text-sm font-medium text-gray-900"
+                >First Name</label
+              >
+              <input
+                type="text"
+                id="firstname"
+                v-model="form.firstname"
+                class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+              <p v-if="errors.firstname" class="text-red-500 text-sm mt-1">
+                {{ errors.firstname }}
+              </p>
             </div>
-
-            <div class="bg-white rounded-b-lg border-b-1 border-gray-300">
-                    <div class="flex justify-start gap-x-10 items-center p-5">
-                        <!-- Profile preview -->
-                        <div class="w-30 h-30 rounded-full overflow-hidden bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
-                            <img
-                            v-if="imageUrl"
-                            :src="imageUrl"
-                            alt="Profile"
-                            class="object-cover w-full h-full"
-                            />
-                            <span v-else>{{ initials }}</span>
-                        </div>
-
-                        <!-- Instructions + Buttons -->
-                        <div class="space-y-5">
-                            <p class="text-sm text-gray-600 mb-2">
-                            Upload a new photo or use your initials. Images should be at least 400×400px.
-                            </p>
-
-                            <div class="flex gap-5">
-                                <!-- Upload Button -->
-                                <input
-                                    ref="fileInput"
-                                    type="file"
-                                    class="hidden"
-                                    @change="handleUpload"
-                                    accept="image/*"
-                                />
-                                <button
-                                    class="flex items-center px-4 py-2 bg-gray-100 text-gray-800 text-sm rounded hover:bg-gray-200"
-                                    @click="$refs.fileInput.click()"
-                                >
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"></path>
-                                    <path d="M12 12v9m0 0l-3-3m3 3l3-3M12 3v9"></path>
-                                    </svg>
-                                    Upload Photo
-                                </button>
-
-                                <!-- Remove Button -->
-                                <button
-                                    class="flex items-center px-4 py-2 bg-gray-100 text-gray-800 text-sm rounded hover:bg-gray-200"
-                                    @click="removePhoto"
-                                    :disabled="!imageUrl"
-                                >
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
-                        
-                    </div>
-
+            <!--last name-->
+            <div class="w-full">
+              <label
+                for="lastname"
+                class="block text-sm font-medium text-gray-900"
+                >last Name</label
+              >
+              <input
+                type="text"
+                id="lastname"
+                v-model="form.lastname"
+                class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+              <p v-if="errors.lastname" class="text-red-500 text-sm mt-1">
+                {{ errors.lastname }}
+              </p>
             </div>
+          </div>
+          <!--email-->
+          <div class="mt-8 w-full">
+            <label for="email" class="block text-sm font-medium text-gray-900"
+              >Email</label
+            >
+            <input
+              type="text"
+              id="email"
+              v-model="form.email"
+              class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            />
+            <p v-if="errors.email" class="text-red-500 text-sm mt-1">
+              {{ errors.email }}
+            </p>
+          </div>
 
-            <!--change personal infomation-->
-            <div class="bg-white rounded-b-lg p-t">
-                <div class="p-5">
-                    <div>
-                        <p class="text-gray-800 text-xl font-semibold">Personal Information</p>
-                    </div>
-                    <form @submit.prevent="handlesubmit" class="">
-                        <div class="flex justify-start gap-x-10 mt-8">
-                            <!--first name-->
-                            <div class="w-full">
-                                <label for="firstname" class="block text-sm font-medium text-gray-900">First Name</label>
-                                <input type="text" id="firstname" v-model="firstname"
-                                    class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600" />
-                                <p v-if="errors.firstname" class="text-red-500 text-sm mt-1">{{ errors.firstname }}</p>
-                            </div>
-                            <!--last name-->
-                            <div class="w-full">
-                                <label for="lastname" class="block text-sm font-medium text-gray-900">last Name</label>
-                                <input type="text" id="lastname" v-model="lastname"
-                                    class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600" />
-                                <p v-if="errors.lastname" class="text-red-500 text-sm mt-1">{{ errors.lastname }}</p>
-                            </div>
-                        </div>
-                        <!--email-->
-                        <div class="mt-8 w-full">
-                                <label for="email" class="block text-sm font-medium text-gray-900">Email</label>
-                                <input type="text" id="email" v-model="form.email"
-                                class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600" />
-                                <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
-                        </div>
+          <!-- phone number -->
+          <div class="mt-8 w-full">
+            <label
+              for="phone_number"
+              class="block text-sm font-medium text-gray-900"
+              >Phone Number</label
+            >
+            <input
+              type="number"
+              id="phone_number"
+              v-model="form.phone_number"
+              class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            />
+            <p v-if="errors.phone_number" class="text-red-500 text-sm mt-1">
+              {{ errors.phone_number }}
+            </p>
+          </div>
 
-                        <!-- phone number -->
-                        <div class="mt-8 w-full">
-                            <label for="phone_number" class="block text-sm font-medium text-gray-900">Email</label>
-                            <input type="number" id="phone_number" v-model="form.phone_number"
-                            class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600" />
-                            <p v-if="errors.phone_number" class="text-red-500 text-sm mt-1">{{ errors.phone_number }}</p>
-                        </div>
-
-                        <!--date of birth-->
-                        <div class="w-full mt-8">
-                            <label for="birth" class="block text-sm font-medium text-gray-900">Date of birth</label>
-                            <input type="date" id="birth" v-model="form.birth"
-                            class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600" />
-                        </div>
-                        <!--address-->
-                        <div class="mt-8 w-full">
+          <!--address-->
+          <!-- <div class="mt-8 w-full">
                             <label for="address" class="block text-sm font-medium text-gray-900">address</label>
                             <input type="text" id="address" v-model="form.address"
                             class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600" />
                             <p v-if="errors.address" class="text-red-500 text-sm mt-1">{{ errors.address }}</p>
-                        </div>
+                        </div> -->
 
-                        <!--city-->
-                        <div class="md:flex md:justify-start mt-8 gap-x-5">
-                            <div class="w-full">
-                                <label for="provine_city" class="block text-sm font-medium text-gray-900">Province/City</label>
-                                <select id="province_city" v-model="form.province_city" class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                                    <option value="" selected>-- Select Province/City --</option>
-                                    <option value="Banteay Meanchey">Banteay Meanchey</option>
-                                    <option value="Battambang">Battambang</option>
-                                    <option value="Kampong Cham">Kampong Cham</option>
-                                    <option value="Kampong Chhnang">Kampong Chhnang</option>
-                                    <option value="Kampong Speu">Kampong Speu</option>
-                                    <option value="Kampong Thom">Kampong Thom</option>
-                                    <option value="Kampot">Kampot</option>
-                                    <option value="Kandal">Kandal</option>
-                                    <option value="Kep">Kep</option>
-                                    <option value="Koh Kong">Koh Kong</option>
-                                    <option value="Kratie">Kratie</option>
-                                    <option value="Mondulkiri">Mondulkiri</option>
-                                    <option value="Phnom Penh">Phnom Penh</option>
-                                    <option value="Preah Vihear">Preah Vihear</option>
-                                    <option value="Prey Veng">Prey Veng</option>
-                                    <option value="Pursat">Pursat</option>
-                                    <option value="Ratanakiri">Ratanakiri</option>
-                                    <option value="Siem Reap">Siem Reap</option>
-                                    <option value="Preah Sihanouk">Preah Sihanouk</option>
-                                    <option value="Stung Treng">Stung Treng</option>
-                                    <option value="Svay Rieng">Svay Rieng</option>
-                                    <option value="Takeo">Takeo</option>
-                                    <option value="Oddar Meanchey">Oddar Meanchey</option>
-                                    <option value="Pailin">Pailin</option>
-                                    <option value="Tboung Khmum">Tboung Khmum</option>
-                                </select>
-                                <p v-if="errors.province_city" class="text-red-500 text-sm mt-1">{{ errors.province_city }}</p>
-                            </div>
-
-                            <div class="w-full">
-                                <label for="provine_city" class="block text-sm font-medium text-gray-900">Country</label>
-                                <div class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                                    <p>Cambodia</p>
-                                </div>
-                                
-                            </div>
-                            
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="mt-8">
-                            <button type="submit"
-                            class="flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600">
-                            Save
-                            </button>
-                        </div>
-                    </form>
-                </div>
+          <!--city-->
+          <div class="md:flex md:justify-start mt-8 gap-x-5">
+            <div class="w-full">
+              <label
+                for="provine_city"
+                class="block text-sm font-medium text-gray-900"
+                >Province/City</label
+              >
+              <select
+                id="province_city"
+                v-model="form.province"
+                class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              >
+                <option value="" selected>-- Select Province/City --</option>
+                <option value="Banteay Meanchey">Banteay Meanchey</option>
+                <option value="Battambang">Battambang</option>
+                <option value="Kampong Cham">Kampong Cham</option>
+                <option value="Kampong Chhnang">Kampong Chhnang</option>
+                <option value="Kampong Speu">Kampong Speu</option>
+                <option value="Kampong Thom">Kampong Thom</option>
+                <option value="Kampot">Kampot</option>
+                <option value="Kandal">Kandal</option>
+                <option value="Kep">Kep</option>
+                <option value="Koh Kong">Koh Kong</option>
+                <option value="Kratie">Kratie</option>
+                <option value="Mondulkiri">Mondulkiri</option>
+                <option value="Phnom Penh">Phnom Penh</option>
+                <option value="Preah Vihear">Preah Vihear</option>
+                <option value="Prey Veng">Prey Veng</option>
+                <option value="Pursat">Pursat</option>
+                <option value="Ratanakiri">Ratanakiri</option>
+                <option value="Siem Reap">Siem Reap</option>
+                <option value="Preah Sihanouk">Preah Sihanouk</option>
+                <option value="Stung Treng">Stung Treng</option>
+                <option value="Svay Rieng">Svay Rieng</option>
+                <option value="Takeo">Takeo</option>
+                <option value="Oddar Meanchey">Oddar Meanchey</option>
+                <option value="Pailin">Pailin</option>
+                <option value="Tboung Khmum">Tboung Khmum</option>
+              </select>
+              <p v-if="errors.province_city" class="text-red-500 text-sm mt-1">
+                {{ errors.province_city }}
+              </p>
             </div>
 
+            <div class="w-full">
+              <label
+                for="provine_city"
+                class="block text-sm font-medium text-gray-900"
+                >Country</label
+              >
+              <div
+                class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              >
+                <p>Cambodia</p>
+              </div>
+            </div>
+          </div>
 
-        </div>
-
-
-    
-
-
+          <!-- Submit Button -->
+          <div class="mt-8">
+            <button
+              type="submit"
+              class="flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
 
-
 <script setup>
-    definePageMeta({
-        layout:'lender',
-        middleware: 'authlender'
-    })
+definePageMeta({
+  layout: "lender",
+  middleware: "authlender",
+});
 
-    import { ref } from 'vue'
-    import { reactive } from 'vue'
+import { lenderProfileData } from "~/composables/lenderProfileData";
 
-    const initials = ref('RL') // Replace with dynamic value as needed
-    const imageUrl = ref(null)
+import { ref } from "vue";
+import { reactive } from "vue";
+import { useAuth } from "~/composables/useAuth";
+import { useRuntimeConfig } from "#app";
 
-    function handleUpload(event) {
-    const file = event.target.files[0]
-    if (file) {
-        imageUrl.value = URL.createObjectURL(file)
-    }
-    }
+let {
+  id,
+  first_name,
+  last_name,
+  email,
+  phone_number,
+  initial_first_name,
+  initial_last_name,
+  profile_picture,
+  province,
+  randomBg,
+} = await lenderProfileData();
+const token = useAuth();
+const config = useRuntimeConfig();
+const fullUrl = (path) => `http://localhost:8001${path}`;
+const imageFile = ref();
+const imageFileEmp = ref();
+// Image handling (identity)
+const imagePreview = ref();
+const fileName = ref();
+const fileInputRef = ref();
 
-    function removePhoto() {
-    imageUrl.value = null
-    // Optionally clear file input
-    const fileInput = document.querySelector('input[type="file"]')
-    if (fileInput) fileInput.value = ''
-    }
+if (profile_picture) {
+  imagePreview.value = fullUrl(profile_picture);
+}
 
-    
+const handleFileChange = (event) => {
+  const target = event.target;
+  const file = target.files?.[0];
+  if (file) {
+    imageFile.value = file;
+    imagePreview.value = URL.createObjectURL(file);
+    fileName.value = file.name;
+  }
+};
+
+const triggerFileInput = () => {
+  fileInputRef.value?.click();
+};
+
+// Modal for identity image
+const isModalOpen = ref(false);
+const openModal = () => (isModalOpen.value = true);
+const closeModal = () => (isModalOpen.value = false);
 
 const form = reactive({
-  firstname: '',
-  lastname: '',
-  email: '',
-  phone_number:'',
-  password: '',
-  confirmPassword: '',
-  agree: false,
-})
-
+  firstname: first_name,
+  lastname: last_name,
+  email: email,
+  phone_number: phone_number,
+  province: province,
+});
+console.log(form.firstname);
 const errors = reactive({
-  firstname: '',
-  lastname: '',
-  email: '',
-  phone_number:'',
-  password: '',
-  confirmPassword: '',
-  agree: '',
-})
+  firstname: "",
+  lastname: "",
+  email: "",
+  phone_number: "",
+  province: "",
+});
 
-const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-const phoneRegex = (phone)=> /^\+?[0-9]{9,15}$/.test(phone)
-function handlesubmit() {
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const phoneRegex = (phone) => /^\+?[0-9]{9,15}$/.test(phone);
+const handlesubmit = async () => {
   // Clear errors
-  errors.firstname = ''
-  errors.lastname = ''
-  errors.email = ''
-  errors.phone_number=''
-  errors.password = ''
-  errors.confirmPassword = ''
-  errors.agree = ''
+  errors.firstname = "";
+  errors.lastname = "";
+  errors.email = "";
+  errors.phone_number = "";
 
-  let valid = true
+  errors.province = "";
+
+  let valid = true;
 
   if (!form.firstname) {
-    errors.firstname = 'Firstname is required'
-    valid = false
+    errors.firstname = "Firstname is required";
+    valid = false;
   }
 
   if (!form.lastname) {
-    errors.lastname = 'Lastname is required'
-    valid = false
+    errors.lastname = "Lastname is required";
+    valid = false;
   }
 
   if (!form.email) {
-    errors.email = 'Email is required'
-    valid = false
+    errors.email = "Email is required";
+    valid = false;
+  } else if (!validateEmail(form.email)) {
+    errors.email = "Enter a valid email";
+    valid = false;
   }
-      else if (!validateEmail(form.email)) {
-      errors.email = 'Enter a valid email'
-      valid = false
-    }
-  
+
   if (!form.phone_number) {
-    errro.phone_number='phone number is required'
-    valid=false
+    errors.phone_number = "phone number is required";
+    valid = false;
   } else if (!phoneRegex(form.phone_number)) {
-    error.phone_number='enter a valid phone number'
-    valid=false
-  }
-  if (!form.password) {
-    errors.password = 'Password is required'
-    valid = false
-  } else if (form.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters'
-    valid = false
-  }
-
-  if (!form.confirmPassword) {
-    errors.confirmPassword = 'Confirm password is required'
-    valid = false
-  } else if (form.confirmPassword !== form.password) {
-    errors.confirmPassword = 'Passwords do not match'
-    valid = false
-  }
-
-  if (!form.agree) {
-    errors.agree = 'You must agree with the terms and conditions'
-    valid = false
+    errors.phone_number = "enter a valid phone number";
+    valid = false;
   }
 
   if (valid) {
-    alert('Form submitted!')
+    // Upload files if changed
+
+    try {
+      if (imageFile.value || imageFileEmp.value) {
+        const formData = new FormData();
+        if (imageFile.value) formData.append("profileUpload", imageFile.value);
+
+        const uploadRes = await $fetch(
+          `${config.public.apiBase}/storeImageForEditLender`,
+          {
+            method: "POST",
+            body: formData,
+            headers: { Authorization: `Bearer ${token.value}` },
+          }
+        );
+
+        if (uploadRes.profile_path) profile_picture = uploadRes.profile_path;
+      }
+      try {
+        await $fetch(`${config.public.apiBase}/editProfileforLender`, {
+          method: "POST",
+          body: {
+            firstname: form.firstname,
+            lastname: form.lastname,
+            email: form.email,
+            phone_number: form.phone_number,
+
+            profile_path: profile_picture,
+            province: form.province,
+
+            lenderId: id,
+          },
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+          },
+        });
+        alert("eidt success");
+        navigateTo("/userUI/lender/profile");
+      } catch (error) {
+        console.log(error);
+      }
+
+      // End of try block
+    } catch (error) {
+      console.log(error);
+    }
+
     // Optional: send form to backend here
   }
-}
+};
 </script>

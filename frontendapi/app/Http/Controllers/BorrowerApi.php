@@ -212,16 +212,41 @@ class BorrowerApi extends Controller
             ]);
             }
 
+    public function getApprove() {
+       $borrower = Borrower::orderBy('created_at', 'desc')->first();
+       if ($borrower->approval_status==='Approved') {
+        
+        return response()->json([
+            'borrower'=>$borrower,
+            
+        ]);
+       }
+
+       return response()->json([
+        'msg'=>'you infomation are in verify step',
+       ]);
+    }
+
     public function loginBorrower(Request $request) {
         //query database : user table : field email
         $user = Borrower::where('email', $request->email)->first();
 
         //check if the password user entered is the same as the one in db
         //and also check if user exist or not
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if ($user->approval_status==='Approved') {
+            if (! $user || ! Hash::check($request->password, $user->password)) {
+                return response()->json(['message' => 'Invalid credentials'], 401);
+            } else {
+                return ['token' => $user->createToken('api-token')->plainTextToken];
+            }
+        } else if ($user->approval_status==='Rejected') {
+            return response()->json([
+            'msg'=>'your Account was rejected'
+        ]);
         }
-        return ['token' => $user->createToken('api-token')->plainTextToken];
+        return response()->json([
+            'msg'=>'your acc not approve yet'
+        ]);
     }
     public function listAllBorrower() {
         $value = Borrower::all();
@@ -237,10 +262,11 @@ class BorrowerApi extends Controller
             "message" => "you are logged out"
         ];
     }
-    public function verifyOTPBorrower(Request $request) {
+    public function verifyOTPBorrower(Request $request)
+    {
         $user = $request->user('borrower');
         //if ($request->user()->tokens()) {
-        if(!$user || !$user->currentAccessToken()) {
+        if (!$user || !$user->currentAccessToken()) {
             return response()->json([
                 'message' => 'wrong token'
             ]);
@@ -250,19 +276,18 @@ class BorrowerApi extends Controller
         ]);
 
         if ($user->otp === $request->otp) {
+            $user->otp_verified = true;
+            $user->save();
             return response()->json([
 
-                'message' => 'otp verified'
+                'approve' => 'otp verified'
 
             ]);
         } else {
             return response()->json([
-                'message' => 'invalid otp'
+                'reject' => 'invalid otp'
             ]);
         }
-
-
-        //return response()->json(['message' => 'otp verified']);
     }
 
 
@@ -326,7 +351,7 @@ class BorrowerApi extends Controller
     $borrower->employment_status = $validated['employment_status'];
     $borrower->province = $validated['province'];
     $borrower->employment_path = $validated['employment_path'] ?? $borrower->employment_path;
-    $borrower->profile_path = $validated['profile_path'];
+    $borrower->profile_picture = $validated['profile_path'];
 
     $borrower->save();
 

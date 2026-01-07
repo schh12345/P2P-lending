@@ -28,11 +28,11 @@ class transcation extends Model
 
     public function lender()
     {
-        return $this->belongsTo(Lender::class, 'BorrowerID');
+        return $this->belongsTo(Lender::class, 'LenderID');
     }
 
     public function borrower()
     {
-        return $this->belongsTo(Borrower::class, 'LenderID');
+        return $this->belongsTo(Borrower::class, 'BorrowerID');
     }
 }

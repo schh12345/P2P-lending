@@ -7,7 +7,8 @@ export const lenderProfileData=async()=> {
     const last_name=lender.value?.last_name
     const email=lender.value?.email
     const phone_number=lender.value?.phone_number
-    const amount=lender.value?.amount
+    const profile_picture=lender.value?.profile_picture
+    const province=lender.value?.province
 
     const initial_first_name=computed(()=> first_name?.charAt(0).toUpperCase())
     const initial_last_name=computed(()=> last_name?.charAt(0).toUpperCase())
@@ -24,9 +25,10 @@ export const lenderProfileData=async()=> {
         last_name,
         email,
         phone_number,
-        amount,
+        province,
         initial_first_name,
         initial_last_name,
-        randomBg
+        randomBg,
+        profile_picture,
     }
 }

@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lenders', function (Blueprint $table) {
+       Schema::create('lenders', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('otp')->unique()->nullable();
+            $table->boolean('otp_verified')->default(false);
             $table->string('password');
             $table->string('phone_number');
-            $table->string('profile_path')->nullable();
+            
+            $table->string('profile_picture')->nullable();
             $table->enum('status', ['Suspended', 'Active', 'Inactive'])->default('Inactive');
             $table->enum('approval_status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->string('country')->nullable();
@@ -27,7 +29,7 @@ return new class extends Migration
             $table->timestamps();
 
         });
-        Schema::create('LenderBalance', function(Blueprint $table){
+        Schema::create('lenderbalance', function(Blueprint $table){
             $table->id();
             $table->unsignedBigInteger('LenderID');
             $table->double('balance');
@@ -39,11 +41,13 @@ return new class extends Migration
 
     }
 
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::dropIfExists('lenders');
+        Schema::dropIfExists('LenderBalance');
     }
 };

@@ -138,7 +138,7 @@
             </div>
             <div class="bg-purple-50 p-4 rounded-lg">
               <label class="text-sm font-medium text-purple-600">Duration</label>
-              <p class="text-lg font-bold text-purple-800">{{ approvedLoan.request_duration }} months</p>
+              <p class="text-lg font-bold text-purple-800">{{ approvedLoan.request_duration }} days</p>
             </div>
             <div class="bg-orange-50 p-4 rounded-lg">
               <label class="text-sm font-medium text-orange-600">Total Amount</label>

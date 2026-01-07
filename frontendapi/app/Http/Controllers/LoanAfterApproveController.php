@@ -13,7 +13,7 @@ class LoanAfterApproveController extends Controller
 {
     // get all loan after approve for lender dashboard
     public function showLoanAfterapproveForLender($lenderId) {
-        $loan=loan_after_approve::with(['Borrower', 'Lender'])->where('LenderID',$lenderId)->get();
+        $loan=loan_after_approve::with(['Borrower', 'Lender'])->where('LenderID',$lenderId)->orderBy('id', 'desc')->get();
 
         if (!$loan) {
             return response()->json(['message'=> 'loan after approve not found'], 404);
@@ -28,7 +28,7 @@ class LoanAfterApproveController extends Controller
 
     // get all loan after approve for borrower dashboard
     public function showAllLoanAfterapproveForBorrower($borrowerId) {
-        $loan=loan_after_approve::with(['Borrower', 'Lender'])->where('BorrowerID',$borrowerId)->get();
+        $loan=loan_after_approve::with(['Borrower', 'Lender'])->where('BorrowerID',$borrowerId)->orderBy('id', 'desc')->get();
 
         if (!$loan) {
             return response()->json(['message'=> 'loan after approve not found'], 404);

@@ -46,6 +46,12 @@ class TransactionController extends Controller
         $borrower->increment('balance', $total);
         $lender->decrement('balance', $total);
 
+        // $borrower->balance = round($borrower->balance, 2);
+        // $borrower->save();
+
+        // $lender->balance = round($lender->balance, 2);
+        // $lender->save();
+
         //update loan status
         $loan->status = 'Funded';
         $loan->save();
@@ -111,6 +117,8 @@ class TransactionController extends Controller
         $borrower->decrement('balance', $total);
         $lender->increment('balance', $total);
 
+        
+
         //update loan status
         $loan->status = 'completed';
         $loan->save();
@@ -125,7 +133,11 @@ class TransactionController extends Controller
 
     // get transaction for lender
     public function transactionForLender($lenderId) {
-        $transaction=transcation::with('lender', 'borrower')->where('LenderID', $lenderId)->get();
+        $transaction = Transcation::with('lender', 'borrower')
+            ->where('LenderID', $lenderId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         if (!$transaction) {
             return response()->json(['message'=>'transaction not found'], 404);
         }
@@ -141,7 +153,7 @@ class TransactionController extends Controller
 
     // get transaction for borrower
     public function transactionForBorrower($borrowerId) {
-        $transaction=transcation::with('lender', 'borrower')->where('BorrowerID', $borrowerId)->get();
+        $transaction=transcation::with('lender', 'borrower')->where('BorrowerID', $borrowerId)->orderBy('created_at', 'desc')->get();
         if (!$transaction) {
             return response()->json(['message'=>'transaction not found'], 404);
         }

@@ -6,23 +6,11 @@
            
 
             <div class="bg-white rounded-b-lg border-b-1 border-gray-300">
-              <div class="space-y-1">
+              <div class="space-y-1 p-10">
               <!-- Upload Input -->
-              <label class="block text-sm font-medium">Upload National Identity</label>
+              <label class="block text-lg font-medium">Upload you profile</label>
 
-              <!-- Custom File Input -->
-              <div class="flex items-center justify-start gap-x-3 rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-600">
-                <button
-                  type="button"
-                  @click="triggerFileInput"
-                  class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
-                >
-                  Choose File
-                </button>
-                <div class="text-2xl object-center text-center">|</div>
-                <span class="text-gray-600 text-sm truncate max-w-xs">{{ fileName }}</span>
-              </div>
-
+             
               <p v-if="errors.imageFile" class="text-red-500 text-sm mt-1">{{ errors.imageFile }}</p>
 
               <!-- Hidden File Input -->
@@ -38,12 +26,12 @@
             <div class="mt-4 flex justify-start">
               <!-- Show image if profile_path exists -->
               <div
-                v-if="profile_path"
+                v-if="imagePreview"
                 @click="openModal"
                 class="rounded-full shadow w-32 h-32 object-cover cursor-pointer hover:opacity-80 transition overflow-hidden"
               >
                 <img
-                  :src="profile_path"
+                  :src="imagePreview"
                   alt="Preview"
                   class="w-full h-full object-cover"
                 />
@@ -58,11 +46,14 @@
               </div>
             </div>
 
+            
+           
+
 
               <!-- Fullscreen Modal -->
               <div
                 v-if="isModalOpen"
-                class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+                class=" fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
                 @click.self="closeModal"
               >
                 <img
@@ -76,6 +67,19 @@
                 >
                   &times;
                 </button>
+              </div>
+
+              <!-- Custom File Input -->
+              <div class=" mt-5 flex items-center justify-start gap-x-3 rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-600">
+                <button
+                  type="button"
+                  @click="triggerFileInput"
+                  class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+                >
+                  Choose File
+                </button>
+                <div class="text-2xl object-center text-center">|</div>
+                <span class="text-gray-600 text-sm truncate max-w-xs">{{ fileName }}</span>
               </div>
             </div>
 
@@ -217,7 +221,7 @@
                         <div class="md:flex md:justify-start mt-8 gap-x-5">
                             <div class="w-full">
                                 <label for="provine_city" class="block text-sm font-medium text-gray-900">Province/City</label>
-                                <select id="province_city" v-model="form.province_city" class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                                <select id="province_city" v-model="form.province" class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600">
                                     <option value="" selected>-- Select Province/City --</option>
                                     <option value="Banteay Meanchey">Banteay Meanchey</option>
                                     <option value="Battambang">Battambang</option>
@@ -245,7 +249,7 @@
                                     <option value="Pailin">Pailin</option>
                                     <option value="Tboung Khmum">Tboung Khmum</option>
                                 </select>
-                                <p v-if="errors.province_city" class="text-red-500 text-sm mt-1">{{ errors.province_city }}</p>
+                                <p v-if="errors.province_city" class="text-red-500 text-sm mt-1">{{ errors.province }}</p>
                             </div>
 
                             <div class="w-full">
@@ -292,11 +296,11 @@
     import { useAuth } from '~/composables/useAuth'
     import { useRuntimeConfig } from '#app'
 
-    const {id, first_name,last_name,email, phone_number, amount, credit_score, initial_first_name, initial_last_name, randomBg,income, employment_path, employment_status,identity_path, profile_path, province}=await borrowerProfileData()
+    let {id, first_name,last_name,email, phone_number, amount, credit_score, initial_first_name, initial_last_name, randomBg,income, employment_path, employment_status,identity_path, profile_picture, province}=await borrowerProfileData()
     const token=useAuth()
     const config=useRuntimeConfig()
     const fullUrl = (path) => `http://localhost:8001${path}`
-   const imageFile = ref()
+    const imageFile = ref()
     const imageFileEmp=ref()
 
 // Image handling (identity)
@@ -304,7 +308,9 @@ const imagePreview = ref()
 const fileName = ref()
 const fileInputRef = ref()
 
-imagePreview.value = fullUrl(profile_path)
+if (profile_picture) {
+imagePreview.value = fullUrl(profile_picture)
+}
 
 const handleFileChange = (event) => {
   const target = event.target
@@ -418,53 +424,58 @@ const handlesubmit= async()=> {
 
   if (valid) {
    // Upload files if changed
-    if (profileUpload.value || imageFileEmp.value) {
+    if (imageFile.value || imageFileEmp.value) {
       const formData = new FormData()
-      if (profileUpload.value) formData.append('profileUpload', profileUpload.value)
+      if (imageFile.value) formData.append('profileUpload', imageFile.value)
       if (imageFileEmp.value) formData.append('employment', imageFileEmp.value)
-
-  try{
-  const uploadRes = await $fetch(`${config.public.sanctum.baseUrl}/storeImageForEdit`, {
-    method: 'POST',
-    body: formData,
-    headers: { Authorization: `Bearer ${token.value}` },
-  })
-
-  if (uploadRes.profile_path) profile_path = fullUrl(uploadRes.profile_path)
-  if (uploadRes.employment_path) employment_path = uploadRes.employment_path
-
-  try {
-    await $fetch(`${config.public.sanctum.baseUrl}/editProfileforBorrower`, {
-    method: 'POST',
-    body: {
-        firstname: form.firstname,
-        lastname: form.lastname,
-        email: form.email,
-        phone_number: form.phone_number,
-        income: form.income,
-        employment_status: form.employment_status,
-        profile_path: profile_path,
-        province: form.province,
-        employment_path: employment_path,
-        borrowerId:id
-    },
-    headers: {
-        Authorization: `Bearer ${token.value}`,
-        
-    },
-    })
-    alert ('eidt success')
-
-    }catch(error) {
-        console.log(error)
     }
+  try{
+      
+      if (imageFile.value || imageFileEmp.value) {
+      const formData = new FormData()
+        if (imageFile.value) formData.append('profileUpload', imageFile.value)
+        if (imageFileEmp.value) formData.append('employment', imageFileEmp.value)
+      
+      const uploadRes = await $fetch(`${config.public.apiBase}/storeImageForEdit`, {
+        method: 'POST',
+        body: formData,
+        headers: { Authorization: `Bearer ${token.value}` },
+      })
 
-  console.log(profileUpload.value)
-  console.log(employment_path);
+      if (uploadRes.profile_path) profile_picture = uploadRes.profile_path
+      if (uploadRes.employment_path) employment_path = uploadRes.employment_path
+    }
+      try {
+        await $fetch(`${config.public.apiBase}/editProfileforBorrower`, {
+        method: 'POST',
+        body: {
+            firstname: form.firstname,
+            lastname: form.lastname,
+            email: form.email,
+            phone_number: form.phone_number,
+            income: form.income,
+            employment_status: form.employment_status,
+            profile_path: profile_picture,
+            province: form.province,
+            employment_path: employment_path,
+            borrowerId:id
+        },
+        headers: {
+            Authorization: `Bearer ${token.value}`,
+            
+        },
+        })
+        alert ('eidt success')
+        navigateTo('/userUI/borrower/profile')
+        }catch(error) {
+            console.log(error)
+        }
+
+  
   // End of try block
   }
   catch (error) {
-    alert(error)
+    console.log(error)
   }
 
   
@@ -478,7 +489,7 @@ const handlesubmit= async()=> {
 
 
     // Optional: send form to backend here
-  }
+
 }
 }
 </script>

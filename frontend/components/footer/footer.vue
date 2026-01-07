@@ -17,10 +17,10 @@
         <div class="place-items-center sm:py-5">
           <h3 class="text-xl font-semibold mb-3">Quick Links</h3>
           <ul class="space-y-2 text-gray-400">
-            <li class="hover:text-white"><span class="pe-2">></span><a href="#">Home</a></li>
-            <li class="hover:text-white"><span class="pe-2">></span><a href="#">Lender</a></li>
-            <li class="hover:text-white"><span class="pe-2">></span><a href="#">Borrower</a></li>
-            <li class="hover:text-white"><span class="pe-2">></span><a href="#">About Us</a></li>
+            <li class="hover:text-white"><span class="pe-2">></span><NuxtLink to="/userUI/frontpage/">Home</NuxtLink></li>
+            <li class="hover:text-white"><span class="pe-2">></span><NuxtLink to="/useruI/frontpage/lenderPage" >Lender</NuxtLink></li>
+            <li class="hover:text-white"><span class="pe-2">></span><NuxtLink to="/userUI/frontpage/borrowerPage">Borrower</NuxtLink></li>
+            <li class="hover:text-white"><span class="pe-2">></span><NuxtLink to="/useruI/frontpage/about">About Us</NuxtLink></li>
           </ul>
         </div>
 
@@ -62,8 +62,8 @@
           © {{ new Date().getFullYear() }} LoanBridge. All rights reserved.
           </div>
           <div class="flex justify-center items-center gap-x-5">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Term of Service</a>
+            <NuxtLink to="/userUI/frontpage/policy" class="hover:text-gray-300">Privacy Policy</NuxtLink>
+            
           </div>
         </div>
     </div>

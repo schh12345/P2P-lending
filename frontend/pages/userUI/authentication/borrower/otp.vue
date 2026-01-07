@@ -1,13 +1,17 @@
 <template>
   <div>
     <div class="lg:mx-10 lg:my-5 md:mt-5 sm:mt-5">
-      
-        <h2 class="text-center lg:text-left text-2xl font-bold font-sans text-gray-900">LoanBridge</h2>
-      
+      <h2
+        class="text-center lg:text-left text-2xl font-bold font-sans text-gray-900"
+      >
+        LoanBridge
+      </h2>
     </div>
-    <div class=" flex justify-center">
-      <div class=" p-8 rounded-2xl w-full max-w-md">
-        <h2 class="text-2xl font-semibold text-center mb-4">Verify Your Identity</h2>
+    <div class="flex justify-center">
+      <div class="p-8 rounded-2xl w-full max-w-md">
+        <h2 class="text-2xl font-semibold text-center mb-4">
+          Verify Your Identity
+        </h2>
         <p class="text-center text-sm text-gray-500 mb-6">
           Enter the 6-digit code sent to your registered email.
         </p>
@@ -26,7 +30,11 @@
 
           <!--resend otp-->
           <div class="flex justify-between items-center text-sm text-gray-600">
-            <button type="button" @click="resendOTP" class="text-blue-500 hover:underline">
+            <button
+              type="button"
+              @click="resendOTP"
+              class="text-blue-500 hover:underline"
+            >
               Resend OTP
             </button>
           </div>
@@ -44,56 +52,59 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
-import { useRuntimeConfig } from '#app'
-import {useAuth} from '@/composables/useAuth'
+import { ref, nextTick } from "vue";
+import { useRuntimeConfig, useRouter } from "#app";
+import { useAuth } from "@/composables/useAuth";
 
 definePageMeta({
-  middleware: 'auth'
-})
-
-const config = useRuntimeConfig()
-const otp = ref(Array(6).fill(''))
+  middleware: "auth",
+});
+const token = useAuth();
+const router = useRouter();
+const config = useRuntimeConfig();
+const otp = ref(Array(6).fill(""));
 
 const moveToNext = (index: number) => {
   if (otp.value[index].length === 1 && index < 5) {
     nextTick(() => {
-      const nextInput = document.querySelectorAll('input')[index + 1]
-      nextInput.focus()
-    })
+      const nextInput = document.querySelectorAll("input")[index + 1];
+      nextInput.focus();
+    });
   }
-}
+};
 
 const verifyOTP = async () => {
-  const enteredOTP = otp.value.join('')
-  const token = useAuth()
+  const enteredOTP = otp.value.join("");
 
   try {
     interface OtpResponse {
-      message: string
+      message: string;
     }
 
-    const res = await $fetch<OtpResponse>(`${config.public.sanctum.baseUrl}/borrower/verifyOTP`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      },
-      body: {
-        otp: enteredOTP
+    const res = await $fetch<OtpResponse>(
+      `${config.public.apiBase}/borrower/verifyOTP`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: {
+          otp: enteredOTP,
+        },
       }
-    })
-
-    if (res && res.message) {
-      alert(res.message)
-      navigateTo('/userUI/borrower/dashboard')
+    );
+    if (res && res.approve) {
+      alert(res.approve);
+      alert("Thank you please wainting for approve");
+      router.push("/userUI/frontpage/waiting");
+    } else if (res && res.reject) {
+      alert(res.reject);
     }
-  } catch (err: any) {
-    alert(err?.data?.message || 'OTP verification failed')
-  }
-}
+  } catch (err: any) {}
+};
 
 const resendOTP = () => {
-  alert('OTP resent')
+  alert("OTP resent");
   // You should implement actual resend logic here
-}
+};
 </script>

@@ -11,10 +11,14 @@ return new class extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
-            $table->foreignId('lender_id')->constrained()->onDelete('cascade');
-            $table->foreignId('borrower_id')->constrained()->onDelete('cascade');
-            //$table->foreignId('request_id')->constrained()->onDelete('cascade');
+            $table->string('email')->unique();
+            $table->string('password');
 
+            // Additional profile fields
+            $table->string('full_name')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('profile_picture_url')->nullable();
 
             $table->timestamps();
         });

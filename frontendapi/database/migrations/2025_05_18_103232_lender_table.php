@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('otp')->unique()->nullable();
+            $table->boolean('otp_verified')->default(false);
             $table->string('password');
             $table->string('phone_number');
-            $table->double('amount')->nullable();
+            
+            $table->string('profile_picture')->nullable();
             $table->enum('status', ['Suspended', 'Active', 'Inactive'])->default('Inactive');
             $table->enum('approval_status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->string('country')->nullable();

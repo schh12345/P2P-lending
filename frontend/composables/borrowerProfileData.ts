@@ -13,7 +13,7 @@ export const borrowerProfileData = async () => {
     const employment_status=borrower.value?.employment_status;
     const employment_path=borrower.value?.employment_path;
     const identity_path=borrower.value?.identity_path;
-    const profile_path=borrower.value?.profile_path;
+    const profile_picture=borrower.value?.profile_picture;
     const province=borrower.value?.province;
 
     const initial_first_name=computed(()=>first_name?.charAt(0).toUpperCase())
@@ -40,7 +40,7 @@ export const borrowerProfileData = async () => {
         employment_path,
         employment_status,
         identity_path,
-        profile_path,
+        profile_picture,
         province,
     }
 };

@@ -11,26 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('loan_requests', function (Blueprint $table) {
             $table->id('request_id');
+            // $table->foreignId('borrower_id')->constrained()->onDelete('cascade');
+            // $table->string('request_duration');
+            // $table->double('request_amount');
+            // $table->string('request_reason');
+            // $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
 
-            // Foreign Keys
-            $table->unsignedBigInteger('BorrowerID');
-            $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
-
+            // $table->timestamps();
             $table->double('request_amount');
-            $table->integer('request_duration')->nullable(); // Duration in months (for example)
-            $table->text('request_reason');
-            $table->float('interest_rate')->nullable();
-            $table->decimal('total', 10, 2)->nullable(); // Total repayable amount (amount + interest)
-
-            // Status Lifecycle
-            $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Active', 'Completed'])->default('Pending');
+            $table->integer('request_duration')->nullable();
+            $table->string('request_reason');
+            $table->float('interest_rate');
+            $table->double('total', 10, 2);
+            // $table->string ('employment_status');
+            // $table->double('income');
+            // $table->string('identity_path');
+            // $table->string('employment_path');
+            $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Active'])->default('pending')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('completed_at')->nullable();
+            $table->timestamps(); // includes created_at and updated_at
 
-
-            $table->timestamps(); // created_at, updated_at
+            $table->unsignedBigInteger('BorrowerID');
+            $table->foreign('BorrowerID')->references('id')->on('borrowers')->onDelete('cascade');
         });
     }
 
@@ -39,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loanRequest');
+        //
     }
 };

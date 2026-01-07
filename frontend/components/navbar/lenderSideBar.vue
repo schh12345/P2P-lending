@@ -43,8 +43,7 @@
                                         <!--dashboard-->
                                       <NuxtLink
                                           to="/userUI/lender/dashboard"
-                                          @click="setActiveAndClose('dashboard')"
-                                          :class="getMobileNavClass('dashboard')"
+                                         
                                           class="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-100 hover:bg-blue-100 hover:text-gray-900 transition-colors"
                                       >
                                           <svg class="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,8 +54,7 @@
                                       <!--marketplace-->
                                       <NuxtLink
                                           to="/userUI/lender/marketplace"
-                                          @click="setActiveAndClose('marketplace')"
-                                          :class="getMobileNavClass('marketplace')"
+                                        
                                           class="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-100 hover:bg-blue-100 hover:text-gray-900 transition-colors"
                                       >
                                           <svg class="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,8 +66,7 @@
                                        <!--fund record-->
                                       <NuxtLink
                                           to="/userUI/lender/fundRecord"
-                                          @click="setActiveAndClose('fund_record')"
-                                          :class="getMobileNavClass('fund_record')"
+                                         
                                           class="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-100 hover:bg-blue-100 hover:text-gray-900 transition-colors"
                                       >
                                           <svg class="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,20 +78,20 @@
                                         <!--transaction record-->
                                         <NuxtLink
                                           to="/userUI/lender/transactionRecord"
-                                          @click="setActiveAndClose('transaction_record')"
-                                          :class="getMobileNavClass('transaction_record')"
+                                         
                                           class="flex items-center px-3 py-3 text-base font-medium rounded-lg text-gray-100 hover:bg-blue-100 hover:text-gray-900 transition-colors"
                                       >
-                                          <svg class="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                          </svg>
+                                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+
                                           Transaction Record
                                         </NuxtLink>
                                   </div>
                               </div>
 
                               <!-- Management -->
-                              <div>
+                              <!-- <div>
                                   <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                                       Management
                                   </h3>
@@ -135,10 +132,10 @@
                                           Teams
                                       </a>
                                   </div>
-                              </div>
+                              </div> -->
 
                               <!-- Settings -->
-                              <div>
+                              <!-- <div>
                                   <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                                       Settings
                                   </h3>
@@ -156,7 +153,7 @@
                                           Settings
                                       </a>
                                   </div>
-                              </div>
+                              </div> -->
                           </nav>
                       </div>
                   <!-- </div> -->

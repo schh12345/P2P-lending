@@ -129,7 +129,7 @@ class LoanRequestController extends Controller
 
             DB::table('loan_requests')->where('request_id', $requestID)->update($updateData);
             $interestRate = 5.0;
-            $total = $loanRequest->request_amount + ($loanRequest->request_amount * $interestRate / 100);
+            $total =round( $loanRequest->request_amount + ($loanRequest->request_amount * $interestRate / 100) * ($loanRequest->request_duration/30), 2);
 
             // Insert new loan record in loans table
             $newLoanId = DB::table('loans')->insertGetId([
